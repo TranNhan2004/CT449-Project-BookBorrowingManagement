@@ -33,7 +33,8 @@ const UserSchema = mongoose.Schema({
     email: {
         type: String,
         trim: true,
-        unique: true
+        unique: true,
+        required: true
     },
     isValid: {
         type: Boolean,
