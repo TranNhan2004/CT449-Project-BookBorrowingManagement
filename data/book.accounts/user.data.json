@@ -1,9 +1,10 @@
-{
-    "username": "",
+{   
+    "phone": "",
+    "email": "",
     "password": "",
     "surname": "",
     "name": "",
-    "address": "",
-    "phone": "",
-    "email": ""
+    "birth": "",
+    "sex": "",
+    "address": ""
 }

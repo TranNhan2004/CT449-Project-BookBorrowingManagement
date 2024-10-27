@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const { String } = mongoose.Schema.Types;
 
-const PublisherSchema = mongoose.Schema({
+const publisherSchema = new mongoose.Schema({
     name: {
         type: String,
         trim: true,
@@ -8,5 +9,5 @@ const PublisherSchema = mongoose.Schema({
     }
 });
 
-const Publisher = mongoose.model('Publisher', PublisherSchema);
+const Publisher = mongoose.model('Publisher', publisherSchema);
 module.exports = Publisher;

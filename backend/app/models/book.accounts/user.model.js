@@ -1,10 +1,17 @@
 const mongoose = require('mongoose');
+const { String, Boolean, Date } = mongoose.Schema.Types;
 
-const UserSchema = mongoose.Schema({
-    username: {
+const userSchema = new mongoose.Schema({
+    phone: {
         type: String,
-        required: true,
-        unique: true
+        unique: true,
+        required: true
+    },
+    email: {
+        type: String,
+        trim: true,
+        unique: true,
+        required: true
     },
     password: {
         type: String,
@@ -20,20 +27,23 @@ const UserSchema = mongoose.Schema({
         trim: true,
         required: true
     },
+    birth: {
+        type: Date,
+        required: true
+    },
+    sex: {
+        type: String,
+        enum: ['male', 'female', 'other'],
+        required: true
+    },
     address: {
         type: String,
         trim: true,
         required: true
     },
-    phone: {
+    role: {
         type: String,
-        unique: true,
-        required: true
-    },
-    email: {
-        type: String,
-        trim: true,
-        unique: true,
+        enum: ['reader', 'staff'],
         required: true
     },
     isValid: {
@@ -43,5 +53,5 @@ const UserSchema = mongoose.Schema({
     }
 });
 
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', userSchema);
 module.exports = User;

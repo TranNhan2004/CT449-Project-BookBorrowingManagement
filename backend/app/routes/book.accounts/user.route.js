@@ -9,13 +9,13 @@ router.route('/')
     .delete(userController.deleteAll);
 
 
-router.route('/:userID')
-    .get(userController.findOne)
+router.route('/:userId')
+    .get(userController.findById)
     .patch((req, res, next) =>
         req.body.action === 'disable' ? 
             userController.disable(req, res, next) :
             userController.update(req, res, next)
     )
-    .delete(userController.deleteOne);
+    .delete(userController.deleteById);
 
 module.exports = router;

@@ -1,18 +1,10 @@
 const mongoose = require('mongoose');
+const { ObjectId, String, Date, Number } = mongoose.Schema.Types;
 
-const ReaderSchema = mongoose.Schema({
-    readerID: {
+const readerSchema = new mongoose.Schema({
+    user: {
         type: ObjectId,
         ref: 'User',
-        required: true,
-    },
-    birth: {
-        type: Date,
-        required: true,
-    },
-    sex: {
-        type: String,
-        enum: ['Nam', 'Nữ', 'Không rõ'],
         required: true,
     },
     point: {
@@ -22,11 +14,15 @@ const ReaderSchema = mongoose.Schema({
     },
     membership: {
         type: String,
-        enum: ['Cơ Bản', 'Đồng', 'Bạc', 'Vàng', 'Kim Cương'],
+        enum: ['basic', 'bronze', 'silver', 'gold', 'platinum', 'diamond'],
         required: true,
-    }
-
+    },
+    maxBookBorrowingQuantity: {
+        type: Number,
+        default: 5,
+        required: true,
+    } 
 });
 
-const Reader = mongoose.model('Reader', ReaderSchema);
+const Reader = mongoose.model('Reader', readerSchema);
 module.exports = Reader;

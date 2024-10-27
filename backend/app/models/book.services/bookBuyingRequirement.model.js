@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const { ObjectId, String, Date, Number } = mongoose.Schema.Types;
 
-const BookBuyingRequirementSchema = mongoose.Schema({
+const bookBuyingRequirementSchema = new mongoose.Schema({
     requiredBy: {
         type: ObjectId,
         ref: 'Reader',
@@ -18,7 +19,8 @@ const BookBuyingRequirementSchema = mongoose.Schema({
     },
     approvedBy: {
         type: ObjectId,
-        ref: 'Employee'
+        ref: 'Staff',
+        default: null,
     },
     number: {
         type: Number,
@@ -27,8 +29,8 @@ const BookBuyingRequirementSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Đang Chờ', 'Đã Phê Duyệt', 'Đã Thanh Toán', 'Chờ Giao Hàng', 'Đã Nhận Hàng', 'Từ Chối', 'Hủy Đơn'],
-        default: 'Đang Chờ',
+        enum: ['pending', 'approved', 'is-paid', 'delivering', 'recieved', 'rejected', 'cancelled'],
+        default: 'pending',
         required: true
     },
     dueDate: {
@@ -38,8 +40,8 @@ const BookBuyingRequirementSchema = mongoose.Schema({
     estimatedReceivingDate: {
         type: Date,
         default: null,
-    },
+    }
 });
 
-const BookBuyingRequirement = mongoose.model('BookBuyingRequirement', BookBuyingRequirementSchema);
+const BookBuyingRequirement = mongoose.model('BookBuyingRequirement', bookBuyingRequirementSchema);
 module.exports = BookBuyingRequirement;

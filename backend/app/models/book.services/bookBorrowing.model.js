@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+const { ObjectId, Date } = mongoose.Schema.Types;
 
-const BookBorrowingSchema = mongoose.Schema({
+const BookBorrowingSchema = new mongoose.Schema({
     borrowedBy: {
         type: ObjectId,
         ref: 'Reader',
         required: true
     },
-    itemID: {
-        type: String,
+    item: {
+        type: ObjectId,
         ref: 'BookItem',
         required: true
     },
@@ -18,7 +19,7 @@ const BookBorrowingSchema = mongoose.Schema({
     },
     approvedBy: {
         type: ObjectId,
-        ref: 'Employee',
+        ref: 'Staff',
         required: true
     },
     dueDate: {

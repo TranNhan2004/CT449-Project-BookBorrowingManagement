@@ -1,24 +1,26 @@
 const mongoose = require('mongoose');
+const { ObjectId, String, Number, Decimal128, Buffer } = mongoose.Schema.Types;
 
-const BookSchema = mongoose.Schema({
-    bookID: {
+
+const BookSchema = new mongoose.Schema({
+    bookId: {
         type: String,
         unique: true,
         required: true
     },
-    authorID: {
+    author: {
         type: ObjectId,
         ref: 'Author',
         required: true
     },
-    publisherID: {
+    publisher: {
         type: ObjectId,
         ref: 'Publisher',
         required: true
     },
     addedBy: {
         type: ObjectId,
-        ref: 'Employee',
+        ref: 'Staff',
         required: true
     },
     name: {
@@ -31,7 +33,7 @@ const BookSchema = mongoose.Schema({
         required: true
     },
     price: {
-        type: Number,
+        type: Decimal128,
         min: 0,
         required: true
     },
@@ -45,7 +47,8 @@ const BookSchema = mongoose.Schema({
         type: Number,
         min: 1,
         required: true
-    }
+    },
+    topics: [{type: String, ref: 'Topic', required: true}]
 });
 
 const Book = mongoose.model('Book', BookSchema);

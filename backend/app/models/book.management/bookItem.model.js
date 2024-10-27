@@ -1,19 +1,20 @@
 const mongoose = require('mongoose');
+const { ObjectId, String, Boolean } = mongoose.Schema.Types;
 
-const BookItemSchema = mongoose.Schema({
-    itemID: {
+const bookItemSchema = new mongoose.Schema({
+    itemId: {
         type: String,
         unique: true,
         required: true
     },
-    bookID: {
-        type: String,
+    book: {
+        type: ObjectId,
         ref: 'Book',
         required: true
     },
     addedBy: {
         type: ObjectId,
-        ref: 'Employee',
+        ref: 'Staff',
         required: true,
     },
     canBorrow: {
@@ -23,11 +24,11 @@ const BookItemSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Có Sẵn', 'Đã Được Mượn', 'Đã Được Đặt Trước', 'Chỉ Đọc Tại Chỗ', 'Mất'],
-        default: 'Có Sẵn',
+        enum: ['available', 'can-reserve', 'reserved', 'borrowed', 'lost'],
+        default: 'available',
         required: true
     }
 });
 
-const BookItem = mongoose.model('BookItem', BookItemSchema);
+const BookItem = mongoose.model('BookItem', bookItemSchema);
 module.exports = BookItem;

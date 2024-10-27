@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
+const { ObjectId, Date } = mongoose.Schema.Types;
 
-const ReservationSchema = mongoose.Schema({
+const reservationSchema = new mongoose.Schema({
     reservedBy: {
         type: ObjectId,
         ref: 'Reader',
         required: true
     },
-    itemID: {
+    item: {
         type: ObjectId,
         ref: 'BookItem',
         required: true
@@ -22,5 +23,5 @@ const ReservationSchema = mongoose.Schema({
     }
 });
 
-const Reservation = mongoose.model('Reservation', ReservationSchema);
+const Reservation = mongoose.model('Reservation', reservationSchema);
 module.exports = Reservation;
