@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { ObjectId, String, Number } = mongoose.Schema.Types;
+const { db } = require('../../config');
+const bookRecommendationConfig = db.collections.bookRecommendation;
 
 const bookRecommendationSchema = new mongoose.Schema({
     recommendedBy: {
@@ -12,16 +14,27 @@ const bookRecommendationSchema = new mongoose.Schema({
         ref: 'Staff',
         default: null
     },
-    bookName: {
+    bookTitle: {
         type: String,
         trim: true,
-        unique: true,
         required: true
     },
-    authorName: {
-        type: String,
-        trim: true,
-        unique: true,
+    authorsName: [
+        {
+            type: String,
+            trim: true,
+            unique: true,
+            required: true
+        }
+    ],
+    publishedYear: {
+        type: Number,
+        min: bookRecommendationConfig.getMinPublishedYear(),
+        max: bookRecommendationConfig.getMaxPublishedYear(),
+        required: true
+    },
+    bookCoverImage: {
+        type: Buffer,
         required: true
     },
     description: {
@@ -29,19 +42,18 @@ const bookRecommendationSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
-    publishYear: {
-        type: Number,
-        min: 1800,
-        max: new Date().getFullYear(),
-        required: true
-    },
     status: {
         type: String,
-        enum: ['pending', 'approved', 'rejected'],
-        default: 'pending',
+        enum: bookRecommendationConfig.statusEnum,
+        default: bookRecommendationConfig.statusEnum[0],
         required: true
+    },
+    rejectedReason: {
+        type: String,
+        trim: true,
+        default: ''
     }
 });
 
 const BookRecommendation = mongoose.model('BookRecommendation', bookRecommendationSchema);
-module.exports = BookRecommendation;
+module.exports = { BookRecommendation, bookRecommendationConfig };

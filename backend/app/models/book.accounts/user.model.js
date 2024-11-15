@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { String, Boolean, Date } = mongoose.Schema.Types;
+const { db } = require('../../config');
+const userConfig = db.collections.user;
 
 const userSchema = new mongoose.Schema({
     phone: {
@@ -29,11 +31,13 @@ const userSchema = new mongoose.Schema({
     },
     birth: {
         type: Date,
+        min: userConfig.getMinBirth(),
+        max: userConfig.getMaxBirth(),
         required: true
     },
-    sex: {
+    gender: {
         type: String,
-        enum: ['male', 'female', 'other'],
+        enum: userConfig.genderEnum,
         required: true
     },
     address: {
@@ -43,7 +47,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['reader', 'staff'],
+        enum: userConfig.roleEnum,
         required: true
     },
     isValid: {
@@ -54,4 +58,4 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
-module.exports = User;
+module.exports = { User, userConfig };

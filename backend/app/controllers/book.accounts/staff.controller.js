@@ -1,162 +1,183 @@
 const StaffService = require('../../services/book.accounts/staff.service');
-const { processMessages } = require('../../messages/vi.message');
-const APIError = require('../../utils/error.util');
-const staffService = new StaffService();
+const { staffMessages, processMessages } = require('../../messages/vi.message');
+const { APIError } = require('../../utils/error.util');
 
-const create = async (req, res, next) => {
+const staffService = new StaffService();
+const collName = staffMessages.staff; // The name of the collection
+
+exports.create = async (req, res, next) => {
+    const payload = { ...req.body };
+
     try {
-        const user = await staffService.create(req.body);
+        const staff = await staffService.create(payload);
         return res.status(201).json({ 
             success: true, 
-            data: user 
+            message: processMessages.success(`Tạo thông tin ${collName} mới`),
+            data: staff 
         });
     } catch (err) {
         next(err instanceof APIError ? 
-            err : new APIError(500,
-                processMessages.serverError('tạo thông tin nhân viên mới')
-            )
+            err : new APIError(500, processMessages.serverError(`tạo thông tin ${collName} mới`))
         );
     }
 };
 
-const findAll = async (req, res, next) => {
-    try {
-        const users = await staffService.findAll(req.query);
-        return res.status(200).json({ 
-            success: true, 
-            data: users 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, 
-                processMessages.serverError(`tìm tất cả nhân viên với truy vấn ${JSON.stringify(req.query)}`)
-            )
-        );
-    }
-};
+exports.findAll = async (req, res, next) => {
+    const query = { ...req.query };
+    const attSelection = { staff: '' };
 
-const findById = async (req, res, next) => {
     try {
-        const user = await staffService.findById(req.params.staffId);
+        const staffs = await staffService.findAll(query, attSelection);
         return res.status(200).json({ 
             success: true, 
-            data: user 
+            data: staffs 
         });
     } catch (err) {
         next(err instanceof APIError ? 
-            err : new APIError(500, 
-                processMessages.serverError(`tìm thông tin nhân viên với ID: ${req.params.staffId}`)
-            )
-        );
-    }
-};
-
-const findOne = async (req, res, next) => {
-    try {
-        const user = await staffService.findOne(req.query);
-        return res.status(200).json({ 
-            success: true, 
-            data: user 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, 
-                processMessages.serverError(`tìm thông tin nhân viên có ${JSON.stringify(req.query)}`)
-            )
+            err : new APIError(500, processMessages.serverError(`tìm tất cả ${collName} với truy vấn 
+                                                                ${JSON.stringify(query)}`.replace(/\s+/g, ' ')))
         );
     }
 };
 
 
-const updateBasicInfoById = async (req, res, next) => {
+exports.findById = async (req, res, next) => {
+    const _id = req.params.staffId;
+    const attSelection = { staff: '' };
+    
     try {
-        await staffService.updateBasicInfoById(req.params.staffId, req.body);
+        const staff = await staffService.findById(_id, attSelection);
         return res.status(200).json({ 
             success: true, 
-            message: processMessages.success(`cập nhật thông tin cơ bản của nhân viên theo ID: ${req.params.staffId}`) 
+            data: staff 
         });
     } catch (err) {
         next(err instanceof APIError ? 
-            err : new APIError(500, 
-                processMessages.serverError(`cập nhật thông tin cơ bản của nhân viên theo ID: ${req.params.staffId}`)
-            )
+            err : new APIError(500, processMessages.serverError(`tìm thông tin ${collName} với ID: ${_id}`))
         );
     }
 };
 
-const changePassword = async (req, res, next) => {
+exports.updateBasicInfoById = async (req, res, next) => {
+    const _id = req.params.staffId;
+    const payload = { ...req.body };
+
     try {
-        await staffService.changePassword(req.params.staffId, req.body.oldPassword, req.body.newPassword);
+        const result = await staffService.updateBasicInfoById(_id, payload);
         return res.status(200).json({ 
             success: true, 
-            message: processMessages.success(`đổi mật khẩu của nhân viên theo ID: ${req.params.staffId}`) 
+            message: processMessages.success(`Cập nhật thông tin cơ bản của ${collName} theo ID: ${_id}`),
+            data: result
+        });
+    } catch (err) {
+        next(err instanceof APIError ? 
+            err : new APIError(500, processMessages.serverError(`cập nhật thông tin cơ bản của
+                                                                ${collName} theo ID: ${_id}`.replace(/\s+/g, ' ')))
+        );
+    }
+};
+
+exports.updatePhoneNumberById = async (req, res, next) => {
+    const _id = req.params.staffId;
+    const { newPhoneNumber } = req.body;
+
+    try {
+        const result = await staffService.updatePhoneNumberById(_id, newPhoneNumber);
+        return res.status(200).json({ 
+            success: true, 
+            message: processMessages.success(`Đổi số điện thoại của ${collName} theo ID: ${_id}`),
+            data: result
+        });
+    } catch (err) {
+        next(err instanceof APIError ? 
+            err : new APIError(500, processMessages.serverError(`đổi số điện thoại của 
+                                                                ${collName} theo ID: ${_id}`.replace(/\s+/g, ' ')))
+        );
+    }
+}
+
+exports.updateEmailById = async (req, res, next) => {
+    const _id = req.params.staffId;
+    const { newEmail } = req.body;
+
+    try {
+        const result = await staffService.updateEmailById(_id, newEmail);
+        return res.status(200).json({ 
+            success: true, 
+            message: processMessages.success(`Đổi email của ${collName} theo ID: ${_id}`),
+            data: result
+        });
+    } catch (err) {
+        next(err instanceof APIError ? 
+            err : new APIError(500, processMessages.serverError(`đổi email của ${collName} theo ID: ${_id}`))
+        );
+    }
+}
+
+exports.updatePasswordById = async (req, res, next) => {
+    const _id = req.params.staffId;
+    const { oldPassword, newPassword } = req.body;
+
+    try {
+        const result = await staffService.updatePasswordById(_id, oldPassword, newPassword);
+        return res.status(200).json({ 
+            success: true, 
+            message: processMessages.success(`Đổi mật khẩu của ${collName} theo ID: ${_id}`),
+            data: result 
+        });
+    } catch (err) {
+        next(err instanceof APIError ? 
+            err : new APIError(500, processMessages.serverError(`đổi mật khẩu của ${collName} theo ID: ${_id}`))
+        );
+    }
+}
+
+exports.updateValiationById = async (req, res, next) => {
+    const _id = req.params.staffId;
+    const { isValid } = req.body;
+
+    try {
+        const result = await staffService.updateValidationById(_id, isValid);
+        return res.status(200).json({ 
+            success: true, 
+            message: processMessages.success(`Cập nhật hiệu lực tài khoản của ${collName} theo ID: ${_id}`),
+            data: result
+        });
+    } catch (err) {
+        next(err instanceof APIError ? 
+            err : new APIError(500, processMessages.serverError(`cập nhật hiệu lực tài khoản của 
+                                                                ${collName} theo ID: ${_id}`.replace(/\s+/g, ' ')))
+        );
+    }
+}
+
+
+exports.deleteById = async (req, res, next) => {
+    const _id = req.params.staffId;
+
+    try {
+        await staffService.deleteById(_id);
+        return res.status(200).json({ 
+            success: true, 
+            message: processMessages.success(`Xoá ${collName} theo ID: ${_id}`) 
         });
     } catch (err) {
         next(err instanceof APIError? 
-            err : new APIError(500, 
-                processMessages.serverError(`đổi mật khẩu của nhân viên theo ID: ${req.params.staffId}`)
-            )
-        );
-    }
-}
-
-const deleteById = async (req, res, next) => {
-    try {
-        await staffService.deleteById(req.params.staffId);
-        return res.status(200).json({ 
-            success: true, 
-            message: processMessages.success(`xoá nhân viên theo ID: ${req.params.staffId}`) 
-        });
-    } catch (err) {
-        next(err instanceof APIError? 
-            err : new APIError(500, 
-                processMessages.serverError(`xoá nhân viên theo ID: ${req.params.staffId}`)
-            )
+            err : new APIError(500, processMessages.serverError(`xoá ${collName} theo ID: ${_id}`))
         );
     }
 };
 
-const deleteAll = async(_req, res, next) => {
+exports.deleteAll = async(_req, res, next) => {
     try {
-        const count = await staffService.deleteAll();
+        const deletedCount = await staffService.deleteAll();
         return res.status(200).json({ 
             success: true, 
-            message: processMessages.success(`xoá tất cả (${count}) nhân viên`) 
+            message: processMessages.success(`Xoá tất cả (${deletedCount}) ${collName}`) 
         });
     } catch (err) {
         next(err instanceof APIError ? 
-            err : new APIError(500, 
-                processMessages.serverError('xoá tất cả nhân viên')
-            )
+            err : new APIError(500, processMessages.serverError(`xoá tất cả ${collName}`))
         );
     }
 }
-
-const disable = async (req, res, next) => {
-    try {
-        await staffService.disable(req.params.staffId);
-        return res.status(200).json({ 
-            success: true, 
-            message: processMessages.success(`vô hiệu hóa tài khoản nhân viên tại ID: ${req.params.staffId}`) 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, 
-                processMessages.serverError(`vô hiệu hóa tài khoản nhân viên tại ID: ${req.params.staffId}`)
-            )
-        );
-    }
-}
-
-module.exports = {
-    create,
-    findAll,
-    findById,
-    findOne,
-    updateBasicInfoById,
-    changePassword,
-    deleteById,
-    deleteAll,
-    disable
-};
-

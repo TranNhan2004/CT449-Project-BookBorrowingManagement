@@ -1,12 +1,14 @@
-const UserService = require('./user.service');
-const Staff = require('../../models/book.accounts/staff.model');
+const { Staff, staffConfig } = require('../../models/book.accounts/staff.model');
 const { staffMessages, processMessages } = require('../../messages/vi.message');
-const APIError = require('../../utils/error.util');
+const { APIError } = require('../../utils/error.util');
+const { getValidatedId } = require('../../utils/validation.util');
+const UserService = require('./user.service');
 
 class StaffService extends UserService {
     constructor() {
         super();
-        this.staffQuery = Staff;
+        this.staffModel = Staff;
+        this.staffConfig = staffConfig;
     }
 
     async create(payload) {
@@ -15,79 +17,90 @@ class StaffService extends UserService {
         if (!payload.position) {
             throw new APIError(400, staffMessages.requiredPosition);
         }
-        if (!['admin', 'librarian'].includes(payload.position)) {
+        if (!this.staffConfig.positionEnum.includes(payload.position)) {
             throw new APIError(400, staffMessages.invalidPosition);
         }
-
-        const user = await super.create(payload);
-
+        
+        const user = await super.createForUser(payload);
+    
         const staffData = {
             user: user._id,
             position: payload.position
         };
 
-        return await this.staffQuery.create(staffData);
+        return await this.staffModel.create(staffData);
     }
 
-    async findAll(query = {}) {
-        return await this.staffQuery.find(query).populate('user');
-    }
-
-    async findById(_id) {
-        const staff = await this.staffQuery.findById(_id).populate('user');
-        if (!staff) {
-            throw new APIError(404, processMessages.notFound('nhân viên', { id: _id }));
+    /**
+     * 
+     * @param {Object} attSelection 
+     * @returns 
+     */
+    async extractFKSelections(attSelection = {}) {
+        let fkSelections = [];
+        if (attSelection.user) {
+            fkSelections.push({ path: 'user', select: attSelection.user });
         }
-        return staff;
+        return fkSelections;
     }
 
-    async findOne(query) {
-        const staff = await this.staffQuery.findOne(query).populate('user');
+    async findAll(filter = {}, attSelection = {}) {
+        const fkSelections = await this.extractFKSelections(attSelection);
+        return await this.staffModel.find(filter).select(attSelection.staff || '').populate(fkSelections);
+    }
+
+    async findById(_id, attSelection = {}) {
+        const validatedId = getValidatedId(_id);
+        const staff = await this.staffModel.findById(validatedId).select(attSelection.staff || '');
         if (!staff) {
-            throw new APIError(404, processMessages.notFound('nhân viên', query));
+            throw new APIError(404, processMessages.notFound(staffMessages.staff, { id: _id }));
         }
-        return staff;
+
+        const fkSelections = await this.extractFKSelections(attSelection);
+        return await staff.populate(fkSelections);
     }
 
     async updateBasicInfoById(_id, payload) {
-        const staff = await this.findById(_id);
-        return await super.updateBasicInfoById(staff.user._id, payload);
+        const attSelection = { staff: 'user', user: '_id' };
+        const staff = await this.findById(_id, attSelection);
+        return await super.updateBasicInfoByIdForUser(staff.user._id, payload);
     }
 
-    async changePassword(_id, oldPassword, newPassword) {
-        const staff = await this.findById(_id);
-        return await super.changePassword(staff.user._id, oldPassword, newPassword);
+    async updatePhoneNumberById(_id, newPhoneNumber) {
+        const attSelection = { staff: 'user', user: '_id' };
+        const staff = await this.findById(_id, attSelection);
+        return await super.updatePhoneNumberByIdForUser(staff.user._id, newPhoneNumber);
     }
 
-    async changePosition(_id, position) {
-        const staff = await this.findById(_id);
-        staff.position = position;
-        await staff.save();
-        return staff;
+    async updateEmailById(_id, newEmail) {
+        const attSelection = { staff: 'user', user: '_id' };
+        const staff = await this.findById(_id, attSelection);
+        return await super.updateEmailByIdForUser(staff.user._id, newEmail);
+    }
+
+    async updatePasswordById(_id, oldPassword, newPassword) {
+        const attSelection = { staff: 'user', user: '_id' };
+        const staff = await this.findById(_id, attSelection);
+        return await super.updatePasswordByIdForUser(staff.user._id, oldPassword, newPassword);
+    }
+
+    async updateValidationById(_id, isValid) {
+        const attSelection = { staff: 'user', user: '_id' };
+        const staff = await this.findById(_id, attSelection);
+        return await super.updateValidationByIdForUser(staff.user._id, isValid);
     }
 
     async deleteById(_id) {
-        const staff = await this.findById(_id);
+        const attSelection = { staff: 'user', user: '_id' };
+        const staff = await this.findById(_id, attSelection);
         const userId = staff.user._id;
-        await staff.remove();
-        return await super.deleteById(userId);
+        await this.staffModel.deleteOne({ _id: staff._id });
+        return await super.deleteByIdForUser(userId);
     }
 
     async deleteAll() {
-        const allStaff = await this.findAll();
-        const userDeletionPromises = allStaff.map(async (staff) => {
-            await super.deleteById(staff.user._id);
-        });
-        
-        const result = await this.staffQuery.deleteMany({});
-        await Promise.all(userDeletionPromises);
-        
-        return result.deletedCount;
-    }
-    
-    async disable(_id) {
-        const staff = await this.findById(_id);
-        return await super.disable(staff.user._id);
+        await this.staffModel.deleteMany({});
+        return await super.deleteAllByRoleForUser('staff');
     }
 }
 

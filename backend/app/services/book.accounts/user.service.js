@@ -1,246 +1,290 @@
-const User = require('../../models/book.accounts/user.model');
+const { User, userConfig } = require('../../models/book.accounts/user.model');
 const { userMessages, processMessages } = require('../../messages/vi.message');
-const APIError = require('../../utils/error.util');
+const { APIError } = require('../../utils/error.util');
+const { getValidatedId, isDefined } = require('../../utils/validation.util');
 
 class UserService {
     constructor() {
-        this.userQuery = User;
+        this.userModel = User;
+        this.userConfig = userConfig;
     }
 
     async extractUserData(payload) {
-        const user = {
+        const userData = {
             phone: payload.phone,
             email: payload.email,
             password: payload.password,
             surname: payload.surname,
             name: payload.name,
             birth: payload.birth,
-            sex: payload.sex,
+            gender: payload.gender,
             address: payload.address,
             role: payload.role
         };
 
-        // Remove fields with undefined values
-        Object.keys(user).forEach(
-            (key) => user[key] === undefined && delete user[key]
+        // Get fields with not undefined values
+        Object.keys(userData).forEach(
+            (key) => !isDefined(userData[key]) && delete userData[key]
         );
-
-        return user;
-    }
-
-    async checkRequiredFields(payload) {
-        let requiredMessage = null;
-
-        if (!payload.phone) {
-            requiredMessage = userMessages.requiredPhone; 
-        } else if (!payload.email) {
-            requiredMessage = userMessages.requiredEmail; 
-        } else if (!payload.password) {
-            requiredMessage = userMessages.requiredPassword; 
-        } else if (!payload.surname) {
-            requiredMessage = userMessages.requiredSurname; 
-        } else if (!payload.name) {
-            requiredMessage = userMessages.requiredName; 
-        } else if (!payload.birth) {
-            requiredMessage = userMessages.requiredBirth;
-        } else if (!payload.sex) {
-            requiredMessage = userMessages.requiredSex;
-        } else if (!payload.address) {
-            requiredMessage = userMessages.requiredAddress; 
-        } else if (!payload.role) {
-            requiredMessage = userMessages.requiredRole;
-        }
-
-        return requiredMessage;
-    } 
-
-    async checkPhoneNumber(payload) {
-        let phoneMessage = null;
-
-        if (payload.phone.length < 10) { 
-            phoneMessage = userMessages.phoneMinLength;
-        }
-        const phoneRegex = /^[0-9]+$/; 
-        if (!phoneRegex.test(payload.phone)) {
-            phoneMessage = userMessages.phoneFormat;
-        }
-
-        return phoneMessage;
-    }
-
-    async checkEmail(payload) {
-        let emailMessage = null;
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-        if (!emailRegex.test(payload.email)) {
-            emailMessage = userMessages.emailFormat;
-        }
-
-        return emailMessage;
-    }
-
-    async checkPassword(payload) {
-        let passwordMessage = null;
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/; 
-
-        if (payload.password.length < 8) {
-            passwordMessage = userMessages.passwordMinLength;
-        } else if (payload.password.length > 20) {
-            passwordMessage = userMessages.passwordMaxLength;
-        } else if (!passwordRegex.test(payload.password)) {
-            passwordMessage = userMessages.passwordFormat;
-        }
-
-        return passwordMessage;
-    }
-
-    async checkRole(payload) {
-        let roleMessage = null;
-        if (!['reader', 'staff'].includes(payload.role)) {
-            roleMessage = userMessages.invalidRole;
-        }
-        return roleMessage;
-    }
-
-    async checkExistingUser(payload) {
-        let existingUserMessages = null;
-        let existingUserId = null;
-
-        // Check for existing username, phone, and email simultaneously for optimization
-        const existingUser = await this.userQuery.findOne({
-            $or: [
-                { phone: payload.phone },
-                { email: payload.email }
-            ]
-        });
-
-        if (existingUser) {
-            existingUserId = existingUser._id.toString();
-            if (existingUser.phone === payload.phone) {
-                existingUserMessages = userMessages.existedPhone; 
-            } else if (existingUser.email === payload.email) {
-                existingUserMessages = userMessages.existedEmail; 
-            }
-        }
-
-        return { existingUserMessages, existingUserId };
-    }
-
-    async create(payload) {
-        // Check for required fields
-        const requiredMessage = await this.checkRequiredFields(payload);
-        if (requiredMessage) {
-            throw new APIError(400, requiredMessage);
-        }
         
-        // Check length and format of phone number
-        const phoneMessage = await this.checkPhoneNumber(payload);
-        if (phoneMessage) {
-            throw new APIError(400, phoneMessage);
-        }
-
-        // Check format of email
-        const emailMessage = await this.checkEmail(payload);
-        if (emailMessage) {
-            throw new APIError(400, emailMessage);
-        }
-        
-        // Check length and format of password
-        const passwordMessage = await this.checkPassword(payload);
-        if (passwordMessage) {
-            throw new APIError(400, passwordMessage);
-        }
-
-        // Check role
-        const roleMessage = await this.checkRole(payload);
-        if (roleMessage) {
-            throw new APIError(400, roleMessage);
-        }
-
-        // Check existing user
-        const { existingUserMessages } = await this.checkExistingUser(payload);
-        if (existingUserMessages) {
-            throw new APIError(409, existingUserMessages);
-        }
-
-        // Extract user data and create a new user
-        const userData = await this.extractUserData(payload);
-        return await this.userQuery.create(userData);
+        return userData;
     }
 
-    async findAll(query = {}) {
-        return await this.userQuery.find(query);
-    }
-
-    async findById(_id) {
-        const user = await this.userQuery.findById(_id);
-        if (!user) {
-            throw new APIError(404, processMessages.notFound('người dùng', { id: _id }));
-        }
-        return user;
-    }
-
-    async findOne(query) {
-        const user = await this.userQuery.findOne(query);
-        if (!user) {
-            throw new APIError(404, processMessages.notFound('người dùng', query));
-        }
-        return user;
-    }
-
-    async updateBasicInfoById(_id, payload) {
-        delete payload.password;
-
-        const updatedData = await this.extractUserData(payload); 
-        const user = await this.findById(_id);
-
-        const { existingUserMessages, existingUserId } = await this.checkExistingUser(updatedData);
-    
-        if (existingUserMessages && existingUserId !== _id) {
-            throw new APIError(409, existingUserMessages);
+    async checkRequiredFieldsForUser(payload) {
+        if (!isDefined(payload.phone)) {
+            throw new APIError(400, userMessages.requiredPhone);
         }
 
-        Object.assign(user, updatedData);
-        await user.save();
-        return user;
-    }
+        if (!isDefined(payload.email)) {
+            throw new APIError(400, userMessages.requiredEmail);
+        }
 
-    async changePassword(_id, oldPassword, newPassword) {
-        if (!oldPassword || !newPassword) {
+        if (!isDefined(payload.password)) {
             throw new APIError(400, userMessages.requiredPassword);
         }
 
-        const user = await this.findById(_id);
+        if (!isDefined(payload.surname)) {
+            throw new APIError(400, userMessages.requiredSurname); 
+        }
+
+        if (!isDefined(payload.name)) {
+            throw new APIError(400, userMessages.requiredName); 
+        }
+
+        if (!isDefined(payload.birth)) {
+            throw new APIError(400, userMessages.requiredBirth);
+        }
+
+        if (!isDefined(payload.gender)) {
+            throw new APIError(400, userMessages.requiredGender);
+        }
+
+        if (!isDefined(payload.address)) {
+            throw new APIError(400, userMessages.requiredAddress);  
+        }
+
+        if (!isDefined(payload.role)) { 
+            throw new APIError(400, userMessages.requiredRole);
+        }
+
+        return true;
+    } 
+
+    async checkGenderForUser(payload) {
+        if (!this.userConfig.genderEnum.includes(payload.gender)) {
+            throw new APIError(400, userMessages.requiredGender);
+        }
+
+        return true;
+    }
+
+    async checkPhoneNumberForUser(payload) {
+        if (payload.phone.length < this.userConfig.phoneMinLength) { 
+            throw new APIError(400, userMessages.phoneMinLength(this.userConfig.phoneMinLength));
+        }
+
+        if (!this.userConfig.phonePattern.test(payload.phone)) {
+            throw new APIError(400, userMessages.phoneFormat);
+        }
+
+        return true;
+    }
+
+    async checkEmailForUser(payload) {
+        if (!this.userConfig.emailPattern.test(payload.email)) {
+            throw new APIError(400, userMessages.emailFormat);
+        }
+
+        return true;
+    }
+
+    async checkPasswordForUser(payload) {
+        if (payload.password.length < this.userConfig.passwordMinLength) {
+            throw new APIError(400, userMessages.passwordMinLength(this.userConfig.passwordMinLength));
+        }
+
+        if (payload.password.length > this.userConfig.passwordMaxLength) {
+            throw new APIError(400, userMessages.passwordMaxLength(this.userConfig.passwordMaxLength));
+        }
+
+        if (!this.userConfig.passwordPattern.test(payload.password)) {
+            throw new APIError(400, userMessages.passwordFormat);
+        }
+
+        return true;
+    }
+
+    async checkRoleForUser(payload) {
+        if (!this.userConfig.roleEnum.includes(payload.role)) {
+            throw new APIError(400, userMessages.invalidRole);
+        }
+
+        return true;
+    }
+
+    async checkBirthForUser(payload) {
+        const birth = new Date(payload.birth);
+        const minBirth = this.userConfig.getMinBirth();
+        const maxBirth = this.userConfig.getMaxBirth();
+        if (isNaN(birth.getTime()) || birth < minBirth || birth > maxBirth) {
+            throw new APIError(400, userMessages.invalidBirth(minBirth, maxBirth));
+        }
+
+        return true;
+    }
+
+    async createForUser(payload) {
+        // Check for required fields
+        await this.checkRequiredFieldsForUser(payload);
+        
+        // Check gender
+        await this.checkGenderForUser(payload);
+        
+        // Check phone number
+        await this.checkPhoneNumberForUser(payload);
+
+        // Check email
+        await this.checkEmailForUser(payload);
+       
+        // Check password
+        await this.checkPasswordForUser(payload);
+
+        // Check birth
+        await this.checkBirthForUser(payload);
+
+        // Check role
+        await this.checkRoleForUser(payload);
+
+        // Check existing user
+        const attSelection = { user: '_id' };
+        const existingPhone = await this.findOne({ phone: payload.phone }, attSelection);
+        if (existingPhone) {
+            throw new APIError(409, userMessages.existedPhone);
+        }
+        const existingEmail = await this.findOne({ email: payload.email }, attSelection);
+        if (existingEmail) {
+            throw new APIError(409, userMessages.existedEmail);
+        }
+        
+        // Extract user data and create a new user
+        const userData = await this.extractUserData(payload);
+        return await this.userModel.create(userData);
+    }
+
+    async findAllForUser(filter = {}, attSelection = {}) {
+        return await this.userModel.find(filter).select(attSelection.user);
+    }
+
+    async findByIdForUser(_id, attSelection = {}) {
+        const validatedId = getValidatedId(_id);
+        const user = await this.userModel.findById(validatedId).select(attSelection.user);
+        if (!user) {
+            throw new APIError(404, processMessages.notFound(userMessages.user, { id: _id }));
+        }
+        return user;
+    }
+
+    async findOne(filter = {}, attSelection = {}, throwError = false) {
+        const user = await this.userModel.findOne(filter).select(attSelection.user);
+        if (!user && throwError) {
+            throw new APIError(404, processMessages.notFound(userMessages.user, filter));
+        }
+        return user;
+    }
+
+    async updateBasicInfoByIdForUser(_id, payload) {
+        delete payload.email;
+        delete payload.phone;
+        delete payload.password;
+        delete payload.role;
+    
+        if (isDefined(payload.gender)) {
+            await this.checkGenderForUser(payload);
+        }
+    
+        if (isDefined(payload.birth)) {
+            await this.checkBirthForUser(payload);
+        }
+    
+        const updatedData = await this.extractUserData(payload);
+        const user = await this.findByIdForUser(_id); // Fetch the entire document
+    
+        // Update fields directly
+        Object.assign(user, updatedData);
+    
+        // Save the document
+        return await user.save();
+    }
+    
+    async updatePhoneNumberByIdForUser(_id, newPhoneNumber) {
+        await this.checkPhoneNumberForUser({ phone: newPhoneNumber });
+    
+        const existingPhone = await this.findOne({ phone: newPhoneNumber });
+        if (existingPhone) {
+            throw new APIError(409, userMessages.existedPhone);
+        }
+    
+        const user = await this.findByIdForUser(_id); // Fetch the entire document
+        user.phone = newPhoneNumber; // Update the phone number
+    
+        // Save the document
+        return await user.save();
+    }
+    
+    async updateEmailByIdForUser(_id, newEmail) {
+        await this.checkEmailForUser({ email: newEmail });
+    
+        const existingEmail = await this.findOne({ email: newEmail });
+        if (existingEmail) {
+            throw new APIError(409, userMessages.existedEmail);
+        }
+    
+        const user = await this.findByIdForUser(_id); // Fetch the entire document
+        user.email = newEmail; // Update the email
+    
+        // Save the document
+        return await user.save();
+    }
+    
+    async updatePasswordByIdForUser(_id, oldPassword, newPassword) {
+        await this.checkPasswordForUser({ password: newPassword });
+    
+        const user = await this.findByIdForUser(_id); // Fetch the entire document
         if (user.password !== oldPassword) {
             throw new APIError(400, userMessages.incorrectOldPassword);
         }
+    
+        user.password = newPassword; // Update the password
+    
+        // Save the document
+        return await user.save();
+    }
+    
+    async deleteByIdForUser(_id) {
+        const attSelection = { user: '_id' }
+        const user = await this.findByIdForUser(_id, attSelection);
+        const result = await this.userModel.deleteOne({ _id: user._id });
+        return result.deletedCount;
         
-        const passwordMessage = await this.checkPassword({ password: newPassword });
-        if (passwordMessage) {
-            throw new APIError(400, passwordMessage);
-        }
-
-        user.password = newPassword;
-        await user.save();
-        return user;
     }
 
-    async deleteById(_id) {
-        const user = await this.findById(_id);
-        const result = await user.remove();
+    async deleteAllForUser() {
+        const result = await this.userModel.deleteMany({});
         return result.deletedCount;
     }
 
-    async deleteAll() {
-        const result = await this.userQuery.deleteMany({});
+    async deleteAllByRoleForUser(role) {
+        await this.checkRoleForUser({ role: role });
+        const result = await this.userModel.deleteMany({ role: role });
         return result.deletedCount;
     }
 
-    async disable(_id) {
-        const user = await this.findById(_id);
-        user.isValid = false;
-        await user.save();
-        return user;
+    async updateValidationByIdForUser(_id, isValid) {
+        const user = await this.findByIdForUser(_id); // Fetch the entire document
+        user.isValid = isValid; // Update the validation status
+    
+        // Save the document
+        return await user.save();
     }
 }
 

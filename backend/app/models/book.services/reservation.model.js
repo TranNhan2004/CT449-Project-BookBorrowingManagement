@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { ObjectId, Date } = mongoose.Schema.Types;
+const { db } = require('../../config');
+const reservationConfig = db.collections.reservation;
 
 const reservationSchema = new mongoose.Schema({
     reservedBy: {
@@ -7,14 +9,13 @@ const reservationSchema = new mongoose.Schema({
         ref: 'Reader',
         required: true
     },
-    item: {
+    bookItem: {
         type: ObjectId,
         ref: 'BookItem',
         required: true
     },
-    createdAt: {
+    reservedDate: {
         type: Date,
-        default: Date.now(),
         required: true
     },
     dueDate: {
@@ -24,4 +25,4 @@ const reservationSchema = new mongoose.Schema({
 });
 
 const Reservation = mongoose.model('Reservation', reservationSchema);
-module.exports = Reservation;
+module.exports = { Reservation, reservationConfig };

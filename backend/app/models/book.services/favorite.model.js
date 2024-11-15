@@ -2,17 +2,17 @@ const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
 const favoriteSchema = new mongoose.Schema({
-    readerId: {
+    reader: {
         type: ObjectId,
         ref: 'Reader',
-        required: true
+        required: true,
     },
-    bookId: {
+    book: {
         type: ObjectId,
         ref: 'Book',
-        required: true
+        required: true,
     }
 });
 
 const Favorite = mongoose.model('Favorite', favoriteSchema);
-module.exports = Favorite;
+module.exports = { Favorite };

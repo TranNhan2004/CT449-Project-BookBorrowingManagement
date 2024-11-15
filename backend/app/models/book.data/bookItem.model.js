@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 const { ObjectId, String, Boolean } = mongoose.Schema.Types;
+const { db } = require('../../config');
+const bookItemConfig = db.collections.bookItem;
 
 const bookItemSchema = new mongoose.Schema({
-    itemId: {
+    publicId: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        index: true
     },
     book: {
         type: ObjectId,
@@ -17,18 +20,12 @@ const bookItemSchema = new mongoose.Schema({
         ref: 'Staff',
         required: true,
     },
-    canBorrow: {
-        type: Boolean,
-        default: true,
-        required: true
-    },
     status: {
         type: String,
-        enum: ['available', 'can-reserve', 'reserved', 'borrowed', 'lost'],
-        default: 'available',
+        enum: bookItemConfig.statusEnum,
         required: true
     }
 });
 
 const BookItem = mongoose.model('BookItem', bookItemSchema);
-module.exports = BookItem;
+module.exports = { BookItem, bookItemConfig };

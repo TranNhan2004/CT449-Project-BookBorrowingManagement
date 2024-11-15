@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
-const { ObjectId, String, Date, Number } = mongoose.Schema.Types;
+const { ObjectId, String, Number } = mongoose.Schema.Types;
+const { db } = require('../../config');
+const readerConfig = db.collections.reader;
+const reservationConfig = db.collections.reservation;
+const bookBorrowingConfig = db.collections.bookBorrowing;
 
 const readerSchema = new mongoose.Schema({
     user: {
@@ -7,22 +11,34 @@ const readerSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    point: {
+    points: {
         type: Number,
-        default: 10,
+        min: readerConfig.minPoints,
+        default: readerConfig.defaultPoints,
         required: true,
     },
-    membership: {
-        type: String,
-        enum: ['basic', 'bronze', 'silver', 'gold', 'platinum', 'diamond'],
+    rank: {
+        title: { type: String, required: true },
+        minPoints: { type: Number, required: true },
+        maxPoints: { type: Number, required: true },
+        maxExtensionDays: { type: Number, required: true },
+        maxReservationDays: { type: Number, required: true },
+    },
+    currentReservationQuantity: {
+        type: Number,
+        min: 0,
+        max: reservationConfig.maxReserveBookItems,
+        default: 0,
         required: true,
     },
-    maxBookBorrowingQuantity: {
+    currentBorrowingQuantity: {
         type: Number,
-        default: 5,
+        min: 0,
+        max: bookBorrowingConfig.maxBorrowBookItems,
+        default: 0,
         required: true,
-    } 
+    }
 });
 
 const Reader = mongoose.model('Reader', readerSchema);
-module.exports = Reader;
+module.exports = { Reader, readerConfig };

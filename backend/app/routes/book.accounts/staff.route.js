@@ -11,11 +11,16 @@ router.route('/')
 
 router.route('/:staffId')
     .get(staffController.findById)
-    .patch((req, res, next) =>
-        req.body.action === 'disable' ? 
-            staffController.disable(req, res, next) :
-            staffController.update(req, res, next)
-    )
+    .patch(staffController.updateBasicInfoById)
     .delete(staffController.deleteById);
+
+
+router.route('/phone/:staffId').patch(staffController.updatePhoneNumberById);
+
+router.route('/email/:staffId').patch(staffController.updateEmailById);
+
+router.route('/password/:staffId').patch(staffController.updatePasswordById);
+
+router.route('/validation/:readerId').patch(staffController.updateValiationById);
 
 module.exports = router;
