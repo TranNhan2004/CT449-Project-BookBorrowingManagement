@@ -1,0 +1,49 @@
+{
+    "reader-1": 
+    { 
+        "phone": "0364229190",
+        "email": "tranthanh2007@gmail.com",
+        "password": "TheThanh@20", 
+        "surname": "Tran The",
+        "name": "Thanh",
+        "birth": "2007-01-15T00:00:00Z",
+        "gender": "male",
+        "address": "Duong 3/2, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho"
+    },
+
+    "reader-2": 
+    {
+        "phone": "0364229191",
+        "email": "kienle2008@gmail.com",
+        "password": "KienLe@19", 
+        "surname": "Le Trung",
+        "name": "Kien",
+        "birth": "2008-05-18T00:00:00Z",
+        "gender": "other",
+        "address": "Duong Mau Than, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho"
+    },
+
+    "reader-3": 
+    {
+        "phone": "0364229192",
+        "email": "lannguyen2008@gmail.com",
+        "password": "LanNguyen@2008", 
+        "surname": "Nguyen Thi",
+        "name": "Lan",
+        "birth": "2008-05-18T00:00:00Z",
+        "gender": "female",
+        "address": "Duong 30/4, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho"
+    },
+
+    "reader-4": 
+    {
+        "phone": "0364229199",
+        "email": "hanhnguyen2010@gmail.com",
+        "password": "LanNguyen@2010", 
+        "surname": "Nguyen Thi",
+        "name": "Hanh",
+        "birth": "2010-06-20T00:00:00Z",
+        "gender": "female",
+        "address": "Duong 30/4, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho"
+    }
+}

@@ -1,0 +1,40 @@
+{
+    "book-1": 
+    {
+        "authors": ["6734c01deaf207df9f8a8c69", "6734c02beaf207df9f8a8c6c", "6734c036eaf207df9f8a8c6f", "6734c046eaf207df9f8a8c72", "6734c058eaf207df9f8a8c76"],
+        "publisher": "6734c0baeaf207df9f8a8c85",
+        "addedBy": "6734bf4feaf207df9f8a8c5c",
+        "topics": ["6734c0e6eaf207df9f8a8c8b"],
+        "title": "Giáo Trình Phép Tính Vi Tích Phân Hàm Một Biến",
+        "price": 65000,
+        "publishedYear": 2018,
+        "language": "vietnamese",
+        "description": "Gồm các chương: \n 1. Giới Hạn Hàm Và Hàm Liên Tục \n 2. Phép Tính Vi Phân Hàm Một Biến \n 3. Phép Tích Tích Phân Của Hàm Một Biến \n 4. Chuỗi Số Và Chuỗi Hàm \n 5. Phương Trình Vi Phân Tuyến Tính"
+    },
+
+    "book-2": 
+    {
+        "authors": ["673589c6ea7be9b3bef071ec"],
+        "publisher": "6734c08eeaf207df9f8a8c82",
+        "addedBy": "6734bf4feaf207df9f8a8c5c",
+        "topics": ["6734c0e6eaf207df9f8a8c8b", "6734c0efeaf207df9f8a8c8e"],
+        "title": "Giáo Trình Toán Rời Rạc Ứng Dụng Trong Tin Học",
+        "price": 115000,
+        "publishedYear": 2020,
+        "language": "vietnamese",
+        "description": "Gồm các phần: \n Phần I. Kiến thức bổ trợ \n Phần II. Logic và ứng dụng \n Phần III. Đồ thị và ứng dụng \n Phần IV. Ngôn ngữ hình thức"
+    },
+
+    "book-3": 
+    {
+        "authors": ["6734c06ceaf207df9f8a8c7c", "6734c075eaf207df9f8a8c7f"],
+        "publisher": "6734c0cceaf207df9f8a8c88",
+        "addedBy": "6734bf4feaf207df9f8a8c5c",
+        "topics": ["6734c0f6eaf207df9f8a8c91"],
+        "title": "Destination-B2",
+        "price": 134000,
+        "publishedYear": 2022,
+        "language": "english",
+        "description": "Giáo trình học ngữ pháp và từ vựng tiếng anh B2"
+    }
+}

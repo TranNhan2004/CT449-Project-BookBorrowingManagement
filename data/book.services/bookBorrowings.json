@@ -1,0 +1,22 @@
+{
+    "bookBorrowing-1":
+    {
+        "borrowedBy": "673768151d17d03eafd10933",
+        "bookItem": "673710d6a85886dea1c520a2",
+        "approvedBy": "6734bf4feaf207df9f8a8c5c"
+    },
+
+    "bookBorrowing-2":
+    {
+        "borrowedBy": "673768151d17d03eafd10933",
+        "bookItem": "673710f0a85886dea1c520b7",
+        "approvedBy": "6734bf4feaf207df9f8a8c5c"
+    },
+
+    "bookBorrowing-3":
+    {
+        "borrowedBy": "673768311d17d03eafd10939",
+        "bookItem": "673710e8a85886dea1c520b0",
+        "approvedBy": "6734bf4feaf207df9f8a8c5c"
+    }
+}

@@ -5,7 +5,7 @@ const { bookItemMessages,
         bookBorrowingMessages,
         reservationMessages, 
         processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 const { formatPublicId } = require('../../utils/publicIdFormatter.util');
 const BookService = require('./book.service');
@@ -22,15 +22,15 @@ class BookItemService {
 
     async checkRequiredFields(payload) {
         if (!isDefined(payload.book)) {
-            throw new APIError(400, processMessages.required(bookItemMessages.requiredBook));
+            throw new ApiError(400, processMessages.required(bookItemMessages.requiredBook));
         }
         
         if (!isDefined(payload.addedBy)) {
-            throw new APIError(400, processMessages.required(bookItemMessages.requiredAddedBy));
+            throw new ApiError(400, processMessages.required(bookItemMessages.requiredAddedBy));
         }
 
         if (!isDefined(payload.status)) {
-            throw new APIError(400, processMessages.required(bookItemMessages.requiredStatus));
+            throw new ApiError(400, processMessages.required(bookItemMessages.requiredStatus));
         }
 
         return true;
@@ -38,7 +38,7 @@ class BookItemService {
 
     async checkStatus(payload) {
         if (!this.bookItemConfig.statusEnum.includes(payload.status)) {
-            throw new APIError(400, bookItemMessages.invalidStatus);
+            throw new ApiError(400, bookItemMessages.invalidStatus);
         }
         return true;
     }
@@ -55,7 +55,7 @@ class BookItemService {
 
         // Check staff
         const staffAttSelection = { staff: '_id' };
-        const [, book, ] = await Promise.all([
+        const [_1, book, _2] = await Promise.all([
             staffService.findById(bookItemData.addedBy, staffAttSelection),
             bookService.incrementPublicItemIdCounter(bookItemData.book),
             bookService.updateItemNumberById(bookItemData.book, 1)
@@ -75,14 +75,14 @@ class BookItemService {
         const validatedId = getValidatedId(_id);
         const bookItem = await this.bookItemModel.findById(validatedId).select(attSelection.bookItem);
         if (!bookItem) {
-            throw new APIError(404, processMessages.notFound(bookItemMessages.bookItem, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(bookItemMessages.bookItem, { id: _id }));
         }
         return bookItem;
     }
 
     async updateStatusById(_id, status) {
         if (!isDefined(status)) {
-            throw new APIError(400, bookItemMessages.requiredStatus);
+            throw new ApiError(400, bookItemMessages.requiredStatus);
         }
         await this.checkStatus({ status: status });
 
@@ -94,7 +94,7 @@ class BookItemService {
     async checkRefBeforeDelete(bookItem) {
         const filter = { bookItem: bookItem._id };
         if (await BookBorrowing.exists(filter)) {
-            throw new APIError(400, processMessages.foreignKeyDeletionError(
+            throw new ApiError(400, processMessages.foreignKeyDeletionError(
                 bookItemMessages.bookItem,
                 bookItem.publicId,
                 bookBorrowingMessages.bookBorrowing
@@ -102,7 +102,7 @@ class BookItemService {
         }
 
         if (await Reservation.exists(filter)) {
-            throw new APIError(400, processMessages.foreignKeyDeletionError(
+            throw new ApiError(400, processMessages.foreignKeyDeletionError(
                 bookItemMessages.bookItem,
                 bookItem.publicId,
                 reservationMessages.reservation

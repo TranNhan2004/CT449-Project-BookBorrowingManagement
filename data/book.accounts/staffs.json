@@ -1,0 +1,66 @@
+{   
+    "staff-1": 
+    {
+        "phone": "0364229183",
+        "email": "trannhanlv2004@gmail.com",
+        "password": "Nhan@1900", 
+        "surname": "Tran Hai",
+        "name": "Nhan",
+        "birth": "2004-11-12T00:00:00Z",
+        "gender": "male",
+        "address": "Duong 3/2, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho",
+        "position": "admin"
+    },
+
+    "staff-2": 
+    {
+        "phone": "0364229184",
+        "email": "chiduong2004@gmail.com",
+        "password": "ABCxyz@123", 
+        "surname": "Nguyen Chi",
+        "name": "Duong",
+        "birth": "2004-08-05T00:00:00Z",
+        "gender": "male",
+        "address": "Duong 30/4, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho",
+        "position": "librarian"
+    },
+
+    "staff-3": 
+    {
+        "phone": "0364229186",
+        "email": "hanhnguyen2004@gmail.com",
+        "password": "XYZabc@123", 
+        "surname": "Nguyen Thi",
+        "name": "Hanh",
+        "birth": "2004-09-06T00:00:00Z",
+        "gender": "female",
+        "address": "Duong Mau Than, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho",
+        "position": "librarian"
+    },
+
+    "staff-4": 
+    {
+        "phone": "0364229188",
+        "email": "toannguyen2004@gmail.com",
+        "password": "ToanNguyen@123", 
+        "surname": "Nguyen Van",
+        "name": "Toan",
+        "birth": "2004-10-05T00:00:00Z",
+        "gender": "male",
+        "address": "Duong Mau Than, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho",
+        "position": "librarian"
+    },
+
+    "staff-5": 
+    {
+        "phone": "0364229190",
+        "email": "nghiale2004@gmail.com",
+        "password": "NghiaLe@123", 
+        "surname": "Le Thanh",
+        "name": "Nghia",
+        "birth": "2005-08-05T00:00:00Z",
+        "gender": "male",
+        "address": "Duong Mau Than, P. Xuan Khanh, Q. Ninh Kieu, TP. Can Tho",
+        "position": "admin"
+    }
+}

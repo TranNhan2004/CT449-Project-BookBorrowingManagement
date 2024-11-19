@@ -1,6 +1,6 @@
 const { BookBorrowing, bookBorrowingConfig } = require('../../models/book.services/bookBorrowing.model');
 const { bookBorrowingMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 
 const ReaderService = require('../book.accounts/reader.service');
@@ -22,13 +22,13 @@ class BookBorrowingService {
 
     async create(payload) {
         if (!isDefined(payload.borrowedBy)) {
-            throw new APIError(400, bookBorrowingMessages.requiredBorrowedBy);
+            throw new ApiError(400, bookBorrowingMessages.requiredBorrowedBy);
         }
         if (!isDefined(payload.bookItem)) {
-            throw new APIError(400, bookBorrowingMessages.requiredBookItem);
+            throw new ApiError(400, bookBorrowingMessages.requiredBookItem);
         }
         if (!isDefined(payload.approvedBy)) {
-            throw new APIError(400, bookBorrowingMessages.requiredApprovedBy);
+            throw new ApiError(400, bookBorrowingMessages.requiredApprovedBy);
         }
 
         const readerAttSelection = { reader: '_id rank' };      
@@ -42,12 +42,12 @@ class BookBorrowingService {
         
         const bookItemStatusEnum = bookItemService.bookItemConfig.statusEnum;
         if (bookItem.status !== bookItemStatusEnum[0] && bookItem.status !== bookItemStatusEnum[1]) {
-            throw new APIError(400, bookBorrowingMessages.canNotBorrow);
+            throw new ApiError(400, bookBorrowingMessages.canNotBorrow);
         }
 
         const maxQuantity = this.bookBorrowingConfig.maxBorrowBookItems;
         if (reader.currentBorrowingQuantity >= maxQuantity) {
-            throw new APIError(400, processMessages.maxBorrowedBooks);
+            throw new ApiError(400, processMessages.maxBorrowedBooks);
         }
 
         const currentDate = new Date();
@@ -60,7 +60,7 @@ class BookBorrowingService {
             const reservation = await reservationService.findOne(reservationFilter, reservationAttSelection, false);
             
             if (!reservation) {
-                throw new APIError(400, bookBorrowingMessages.canNotBorrow);
+                throw new ApiError(400, bookBorrowingMessages.canNotBorrow);
             }
 
             await reservationService.deleteById(reservation._id);
@@ -111,7 +111,7 @@ class BookBorrowingService {
         const bookBorrowing = await this.bookBorrowingModel.findById(validatedId)
                                                             .select(attSelection.bookBorrowing || '');
         if (!bookBorrowing) {
-            throw new APIError(404, processMessages.notFound(bookBorrowingMessages.bookBorrowing, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(bookBorrowingMessages.bookBorrowing, { id: _id }));
         }
         const fkSelections = await this.extractFKSelections(attSelection);
         return await bookBorrowing.populate(fkSelections);
@@ -121,7 +121,7 @@ class BookBorrowingService {
         const bookBorrowing = await this.findById(_id);
     
         if (isDefined(bookBorrowing.returnedDate)) {
-            throw new APIError(400, bookBorrowingMessages.returned);
+            throw new ApiError(400, bookBorrowingMessages.returned);
         }
     
         const bookItemStatusEnum = bookItemService.bookItemConfig.statusEnum;

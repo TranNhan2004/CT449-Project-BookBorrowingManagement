@@ -43,12 +43,6 @@ module.exports = {
             staff: {
                 positionEnum: ['admin', 'librarian']
             },
-            author: {
-                publicIdPattern: /^\d{5}$/
-            },
-            publisher: {
-                publicIdPattern: /^\d{5}$/
-            },
             topic: {
                 publicIdPattern: /^\d{3}$/
             },
@@ -57,12 +51,11 @@ module.exports = {
                 topicsMaxLength: 5,
                 getMinPublishedYear: () => new Date().getFullYear() - 200,
                 getMaxPublishedYear: () => new Date().getFullYear(),
-                languageEnum: ['english', 'vietnamese'],
                 minPrice: 0
             },
             bookItem: {
                 publicIdSuffixLength: 2,
-                statusEnum: ['can-reserve', 'reserved', 'borrowed', 'read-only', 'lost'],
+                statusEnum: ['can-reserve', 'reserved', 'borrowed', 'read-only'],
             },
             bookRecommendation: {
                 getMinPublishedYear: () => new Date().getFullYear() - 200,
@@ -85,5 +78,14 @@ module.exports = {
                 penalty: 5,
             }
         }
-    }
+    },
+    jwtEnv: {
+        secretKey: process.env.JWT_SECRET_KEY,
+        expiresIn: process.env.JWT_EXPIRES_IN,
+    },
+    cookieEnv: {
+        name: process.env.COOKIE_NAME,
+        maxAge: parseInt(process.env.COOKIE_MAX_AGE) * 60 * 60 * 1000,
+    },
+    nodeEnv: process.env.NODE_ENV
 };

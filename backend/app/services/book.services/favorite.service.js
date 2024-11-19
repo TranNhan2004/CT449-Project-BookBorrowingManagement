@@ -1,6 +1,6 @@
 const { Favorite } = require('../../models/book.services/favorite.model');
 const { favoriteMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 
 const ReaderService = require('../book.accounts/reader.service');
@@ -17,11 +17,11 @@ class FavoriteService {
 
     async create(payload) {
         if (!isDefined(payload.reader)) {
-            throw new APIError(400, favoriteMessages.requiredReader);
+            throw new ApiError(400, favoriteMessages.requiredReader);
         }
 
         if (!isDefined(payload.book)) {
-            throw new APIError(400, favoriteMessages.requiredBook);
+            throw new ApiError(400, favoriteMessages.requiredBook);
         }
 
         const readerAttSelection = { reader: '_id' };
@@ -59,7 +59,7 @@ class FavoriteService {
         const validatedId = getValidatedId(_id);
         const favorite = await this.favoriteModel.findById(validatedId).select(attSelection.favorite || '');
         if (!favorite) {
-            throw new APIError(404, processMessages.notFound(favoriteMessages.favorite, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(favoriteMessages.favorite, { id: _id }));
         }
         const fkSelections = await this.extractFKSelections(attSelection);
         return await favorite.populate(fkSelections);

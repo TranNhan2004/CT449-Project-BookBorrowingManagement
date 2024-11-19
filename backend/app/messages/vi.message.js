@@ -4,20 +4,21 @@ module.exports = {
         notFound: (object, query = null) => query === null ? 
                                     `Không tìm thấy ${object}!` : 
                                     `Không tìm thấy ${object} với truy vấn ${JSON.stringify(query)}!`,
-        fobidden: (action) => `Không có quyền ${action}!`,
         serverError: (process) => `Một lỗi đã xảy ra trong hệ thống trong quá trình ${process}! Vui lòng thử lại sau!`,
         foreignKeyDeletionError: (source, sourceName, target) => 
             `Không thể xóa ${source} ${sourceName} vì vẫn có ${target} tham chiếu đến ${source}.`
     
     },
-
-    actionMessages: {
-
-    },
     
     authMessages: {
         invalidToken: 'Mã token không hợp lệ!',
         expiredToken: 'Mã token đã hết hạn!',
+        requiredPhoneOrEmail: 'Số điện thoại hoặc email không được để trống',
+        requiredPassword: 'Mật khẩu không được để trống!',
+        incorrectLoginInfo: 'Email chưa được đăng ký tài khoản hoặc mật khẩu không đúng!',
+        invalidAccount: 'Tài khoản đã bị vô hiệu hóa! Không thể đăng nhập!',
+        unauthorized: 'Tài khoản chưa được đăng nhập!',
+        fobidden: 'Bạn không có quyền truy cập vào đường dẫn này!'
     },
 
     userMessages: {
@@ -99,7 +100,8 @@ module.exports = {
         invalidLanguage: 'Ngôn ngữ của sách không hợp lệ!',
         invalidPublishedYear: (minYear, maxYear) =>
             `Năm sản xuất của sách phải nằm trong khoảng năm ${minYear} đến năm ${maxYear}!`,
-        invalidPrice: (minPrice) => `Giá bán của sách phải lớn hơn ${minPrice}!`
+        invalidPrice: (minPrice) => `Giá bán của sách phải lớn hơn ${minPrice}!`,
+        canNotChangeMainTopic: 'Không thể thay đổi chủ đề chính cảu sách!'
     },
 
     bookItemMessages: {

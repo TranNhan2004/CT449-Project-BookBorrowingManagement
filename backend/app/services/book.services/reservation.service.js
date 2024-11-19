@@ -1,6 +1,6 @@
 const { Reservation, reservationConfig } = require('../../models/book.services/reservation.model');
 const { reservationMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 
 const ReaderService = require('../book.accounts/reader.service');
@@ -18,10 +18,10 @@ class ReservationService {
 
     async create(payload) {
         if (!isDefined(payload.reservedBy)) {
-            throw new APIError(400, reservationMessages.requiredReservedBy);
+            throw new ApiError(400, reservationMessages.requiredReservedBy);
         }
         if (!isDefined(payload.bookItem)) {
-            throw new APIError(400, reservationMessages.requiredBookItem);
+            throw new ApiError(400, reservationMessages.requiredBookItem);
         }
 
         const readerAttSelection = { reader: '_id rank currentReservationQuantity' };
@@ -34,12 +34,12 @@ class ReservationService {
         
         const bookItemStatusEnum = bookItemService.bookItemConfig.statusEnum;
         if (bookItem.status !== bookItemStatusEnum[0]) {
-            throw new APIError(400, reservationMessages.canNotReserve);
+            throw new ApiError(400, reservationMessages.canNotReserve);
         }
 
         const maxQuantity = this.reservationConfig.maxReserveBookItems;
         if (reader.currentReservationQuantity === maxQuantity) {
-            throw new APIError(400, reservationMessages.maxReserveBookItems(maxQuantity));
+            throw new ApiError(400, reservationMessages.maxReserveBookItems(maxQuantity));
         }
 
         const reservedDate = new Date(); 
@@ -78,7 +78,7 @@ class ReservationService {
     async findOne(filter = {}, attSelection = {}, throwError = true) {
         const reservation = await this.reservationModel.findOne(filter).select(attSelection.reservation || '');
         if (!reservation && throwError) {
-            throw new APIError(404, processMessages.notFound(reservationMessages.reservation, filter));
+            throw new ApiError(404, processMessages.notFound(reservationMessages.reservation, filter));
         }
         const fkSelections = await this.extractFKSelections(attSelection);
         return await reservation.populate(fkSelections);
@@ -88,7 +88,7 @@ class ReservationService {
         const validatedId = getValidatedId(_id);
         const reservation = await this.reservationModel.findById(validatedId).select(attSelection.reservation || '');
         if (!reservation) {
-            throw new APIError(404, processMessages.notFound(reservationMessages.reservation, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(reservationMessages.reservation, { id: _id }));
         }
         const fkSelections = await this.extractFKSelections(attSelection);
         return await reservation.populate(fkSelections);

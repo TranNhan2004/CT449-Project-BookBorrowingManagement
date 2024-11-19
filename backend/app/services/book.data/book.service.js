@@ -1,12 +1,13 @@
 const { Book, bookConfig } = require('../../models/book.data/book.model');
 const { BookItem } = require('../../models/book.data/bookItem.model');
 const { Favorite } = require('../../models/book.services/favorite.model');
+const { Review } = require('../../models/book.services/review.model');
 const { bookMessages, 
         bookItemMessages,
         favoriteMessages, 
         reviewMessages, 
         processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 const { formatPublicId } = require('../../utils/publicIdFormatter.util');
 
@@ -37,7 +38,6 @@ class BookService {
             image: payload.image,
             price: payload.price,
             publishedYear: payload.publishedYear,
-            language: payload.language,
             description: payload.description
         };
 
@@ -51,31 +51,28 @@ class BookService {
 
     async checkRequiredFields(payload) {
         if (!isDefined(payload.authors) || payload.authors.length === 0) {
-            throw new APIError(400, bookMessages.requiredAuthors);
+            throw new ApiError(400, bookMessages.requiredAuthors);
 
         } else if (!isDefined(payload.publisher)) {
-            throw new APIError(400, bookMessages.requiredPublisher);
+            throw new ApiError(400, bookMessages.requiredPublisher);
         
         } else if (!isDefined(payload.addedBy)) {
-            throw new APIError(400, bookMessages.requiredAddedBy);
+            throw new ApiError(400, bookMessages.requiredAddedBy);
         
         } else if (!isDefined(payload.title)) {
-            throw new APIError(400, bookMessages.requiredTitle);
+            throw new ApiError(400, bookMessages.requiredTitle);
         
         } else if (!isDefined(payload.image)) {
-            throw new APIError(400, bookMessages.requiredImage);
+            throw new ApiError(400, bookMessages.requiredImage);
         
         } else if (!isDefined(payload.price)) {
-            throw new APIError(400, bookMessages.requiredPrice);
+            throw new ApiError(400, bookMessages.requiredPrice);
         
         } else if (!isDefined(payload.publishedYear)) {
-            throw new APIError(400, bookMessages.requiredPublishedYear);    
+            throw new ApiError(400, bookMessages.requiredPublishedYear);    
         
         } else if (!isDefined(payload.topics) || payload.topics.length === 0) {
-            throw new APIError(400, bookMessages.requiredTopics);
-
-        } else if (!isDefined(payload.language)) {
-            throw new APIError(400, bookMessages.requiredLanguage);
+            throw new ApiError(400, bookMessages.requiredTopics);
         }
 
         return true;
@@ -85,14 +82,7 @@ class BookService {
     async checkTopicsMaxLength(payload) {
         const maxLength = this.bookConfig.topicsMaxLength;
         if (payload.topics.length > maxLength) {
-            throw new APIError(400, bookMessages.topicsMaxLength(maxLength));
-        }
-        return true;
-    }
-
-    async checkLanguage(payload) {
-        if (!this.bookConfig.languageEnum.includes(payload.language)) {
-            throw new APIError(400, bookMessages.invalidLanguage);
+            throw new ApiError(400, bookMessages.topicsMaxLength(maxLength));
         }
         return true;
     }
@@ -101,7 +91,7 @@ class BookService {
         const minYear = this.bookConfig.getMinPublishedYear();
         const maxYear = this.bookConfig.getMaxPublishedYear();
         if (payload.publishedYear < minYear || payload.publishedYear > maxYear) {
-            throw new APIError(400, bookMessages.invalidPublishedYear(minYear, maxYear));
+            throw new ApiError(400, bookMessages.invalidPublishedYear(minYear, maxYear));
         }
         return true;
     }
@@ -109,63 +99,52 @@ class BookService {
     async checkPrice(payload) {
         const minPrice = this.bookConfig.minPrice;
         if (payload.price < minPrice) {
-            throw new APIError(400, bookMessages.invalidPrice(minPrice));
+            throw new ApiError(400, bookMessages.invalidPrice(minPrice));
         }
         return true;
     }
 
     async create(payload) {
-        // Validate required fields
         await this.checkRequiredFields(payload);
     
-        // Perform individual checks for constraints
         await this.checkTopicsMaxLength(payload);
-        await this.checkLanguage(payload);
         await this.checkPublishedYear(payload);
         await this.checkPrice(payload);
     
-        // Prepare attribute selection for foreign key validation
         const authorAttSelection = { author: '_id' };
         const publisherAttSelection = { publisher: '_id' };
         const staffAttSelection = { staff: '_id' };
         const topicAttSelection = { topic: '_id' };
     
-        // Validate foreign keys in parallel
         const authorChecks = payload.authors.map(authorId => authorService.findById(authorId, authorAttSelection));
         const topicChecks = payload.topics.map(topicId => topicService.findById(topicId, topicAttSelection));
     
         await Promise.all([
-            Promise.all(authorChecks), // Validate all authors
-            Promise.all(topicChecks), // Validate all topics
-            publisherService.findById(payload.publisher, publisherAttSelection), // Validate publisher
-            staffService.findById(payload.addedBy, staffAttSelection), // Validate staff
+            Promise.all(authorChecks), 
+            Promise.all(topicChecks), 
+            publisherService.findById(payload.publisher, publisherAttSelection), 
+            staffService.findById(payload.addedBy, staffAttSelection), 
         ]);
     
-        // Check for duplicate authors
+
         const authorSet = new Set(payload.authors);
         if (authorSet.size !== payload.authors.length) {
-            throw new APIError(409, bookMessages.existedAuthor);
+            throw new ApiError(409, bookMessages.existedAuthor);
         }
     
-        // Check for duplicate topics
         const topicSet = new Set(payload.topics);
         if (topicSet.size !== payload.topics.length) {
-            throw new APIError(409, bookMessages.existedTopic);
+            throw new ApiError(409, bookMessages.existedTopic);
         }
     
-        // Extract book data from payload
         const bookData = await this.extractBookData(payload);
     
-        // Increment the public book ID counter for the main topic
         const mainTopic = await topicService.incrementPublicBookIdCounter(bookData.topics[0]);
-    
-        // Generate and set the public ID for the book
         bookData.publicId = `${mainTopic.publicId}.${formatPublicId(
             mainTopic.publicBookIdCounter,
             this.bookConfig.publicIdSuffixLength
         )}`;
     
-        // Create and save the new book document
         return await this.bookModel.create(bookData);
     }
     
@@ -195,7 +174,7 @@ class BookService {
         const validatedId = getValidatedId(_id);
         const book = await this.bookModel.findById(validatedId).select(attSelection.book || '');
         if (!book) {
-            throw new APIError(404, processMessages.notFound(bookMessages.book, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(bookMessages.book, { id: _id }));
         }
 
         const fkSelections = await this.extractFKSelections(attSelection);
@@ -203,10 +182,7 @@ class BookService {
     }
 
     async updateBasicInfoById(_id, payload) {
-        delete payload.authors;
-        delete payload.publisher;
         delete payload.addedBy;
-        delete payload.topics;
     
         if (isDefined(payload.language)) {
             await this.checkLanguage(payload);
@@ -218,10 +194,41 @@ class BookService {
     
         if (isDefined(payload.price)) {
             await this.checkPrice(payload);
-        }
+        }        
     
+        if (isDefined(payload.authors)) {
+            const authorAttSelection = { author: '_id' };
+            const authorChecks = payload.authors.map(authorId => authorService.findById(authorId, authorAttSelection));
+            await Promise.all(authorChecks);
+
+            const authorSet = new Set(payload.authors);
+            if (authorSet.size !== payload.authors.length) {
+                throw new ApiError(409, bookMessages.existedAuthor);
+            }
+        }
+
+        if (isDefined(payload.topics)) {
+            const topicAttSelection = { topic: '_id' };
+            const topicChecks = payload.topics.map(topicId => topicService.findById(topicId, topicAttSelection));
+            await Promise.all(topicChecks);
+
+            const topicSet = new Set(payload.topics);
+            if (topicSet.size !== payload.topics.length) {
+                throw new ApiError(409, bookMessages.existedTopic);
+            }
+        }
+
+        if (isDefined(payload.publisher)) {
+            const publisherAttSelection = { publisher: '_id' };
+            await publisherService.findById(payload.publisher, publisherAttSelection);
+        }
+        
         const updatedData = await this.extractBookData(payload);
         const book = await this.findById(_id);
+
+        if (book.topics[0] != updatedData.topics[0]) {
+            throw new ApiError(400, bookMessages.canNotChangeMainTopic);
+        }
     
         Object.assign(book, updatedData);
         return await book.save();
@@ -231,6 +238,7 @@ class BookService {
         const book = await this.findById(_id);
 
         book.itemNumber = Math.max(book.itemNumber + increment, 0);
+        console.log(book);
         return await book.save();
     }
     
@@ -248,17 +256,10 @@ class BookService {
         return await book.save();
     }
     
-    async updateVisibilityById(_id, isVisible) {
-        const book = await this.findById(_id);
-    
-        book.isVisible = isVisible;
-        return await book.save();
-    }
-    
     async checkRefBeforeDelete(book) {
         const filter = { book: book._id };
         if (await BookItem.exists(filter)) {
-            throw new APIError(400, processMessages.foreignKeyDeletionError(
+            throw new ApiError(400, processMessages.foreignKeyDeletionError(
                 bookMessages.book,
                 book.title,
                 bookItemMessages.bookItem
@@ -266,7 +267,7 @@ class BookService {
         }
 
         if (await Favorite.exists(filter)) {
-            throw new APIError(400, processMessages.foreignKeyDeletionError(
+            throw new ApiError(400, processMessages.foreignKeyDeletionError(
                 bookMessages.book,
                 book.title,
                 favoriteMessages.favorite
@@ -274,7 +275,7 @@ class BookService {
         }
 
         if (await Review.exists(filter)) {
-            throw new APIError(400, processMessages.foreignKeyDeletionError(
+            throw new ApiError(400, processMessages.foreignKeyDeletionError(
                 bookMessages.book,
                 book.title,
                 reviewMessages.review

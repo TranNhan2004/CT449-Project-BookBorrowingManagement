@@ -1,9 +1,8 @@
 const { Topic, topicConfig } = require('../../models/book.data/topic.model');
 const { Book } = require('../../models/book.data/book.model');
 const { topicMessages, bookMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
-
 
 
 class TopicService {
@@ -37,19 +36,19 @@ class TopicService {
 
     async create(payload) {
         if (!isDefined(payload.publicId)) {
-            throw new APIError(400, topicMessages.requiredPublicId);
+            throw new ApiError(400, topicMessages.requiredPublicId);
         }
         if (!isDefined(payload.name)) {
-            throw new APIError(400, topicMessages.requiredName);
+            throw new ApiError(400, topicMessages.requiredName);
         }
 
         if (!this.topicConfig.publicIdPattern.test(payload.publicId)) {
-            throw new APIError(400, topicMessages.invalidPublicId);
+            throw new ApiError(400, topicMessages.invalidPublicId);
         }
 
         const { existingTopicMessage } = await this.findExistingTopic(payload);
         if (existingTopicMessage) {
-            throw new APIError(409, existingTopicMessage);
+            throw new ApiError(409, existingTopicMessage);
         }
 
         const topicData = {
@@ -68,13 +67,13 @@ class TopicService {
         const validatedId = getValidatedId(_id);
         const topic = await this.topicModel.findById(validatedId).select(attSelection.topic || '');
         if (!topic) {
-            throw new APIError(404, processMessages.notFound(topicMessages.topic, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(topicMessages.topic, { id: _id }));
         }
         return topic;
     }
 
     async incrementPublicBookIdCounter(_id) {
-        const topic = await this.findById(_id, attSelection);
+        const topic = await this.findById(_id);
     
         topic.publicBookIdCounter += 1;
         return await topic.save();
@@ -83,7 +82,7 @@ class TopicService {
     async checkRefBeforeDelete(topic) {
         const filter = { topics: topic._id };
         if (await Book.exists(filter)) {
-            throw new APIError(400, processMessages.foreignKeyDeletionError(
+            throw new ApiError(400, processMessages.foreignKeyDeletionError(
                 topicMessages.topic,
                 topic.name,
                 bookMessages.book
@@ -94,11 +93,11 @@ class TopicService {
     }
 
     async deleteById(_id) {
-        const attSelection = { topic: '_id' };
+        const attSelection = { topic: '_id name' };
         const topic = await this.findById(_id, attSelection);
         
         await this.checkRefBeforeDelete(topic);
-
+        
         const result = await this.topicModel.deleteOne({ _id: topic._id });
         return result.deletedCount;
     }

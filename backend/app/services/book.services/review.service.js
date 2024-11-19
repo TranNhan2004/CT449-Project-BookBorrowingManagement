@@ -1,6 +1,6 @@
 const { Review, reviewConfig } = require('../../models/book.services/review.model');
 const { reviewMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 
 const ReaderService = require('../book.accounts/reader.service');
@@ -33,19 +33,19 @@ class ReviewService {
 
     async checkRequiredFields(payload) {
         if (!isDefined(payload.reader)) {
-            throw new APIError(400, reviewMessages.requiredReader);
+            throw new ApiError(400, reviewMessages.requiredReader);
         }
 
         if (!isDefined(payload.book)) {
-            throw new APIError(400, reviewMessages.requiredBook);
+            throw new ApiError(400, reviewMessages.requiredBook);
         }
         
         if (!isDefined(payload.rating)) {
-            throw new APIError(400, reviewMessages.requiredRating);
+            throw new ApiError(400, reviewMessages.requiredRating);
         }
 
         if (!isDefined(payload.comment)) {
-            throw new APIError(400, reviewMessages.requiredComment);
+            throw new ApiError(400, reviewMessages.requiredComment);
         }
 
         return true;
@@ -53,7 +53,7 @@ class ReviewService {
 
     async checkRating(payload) {
         if (!this.reviewConfig.ratingEnum.includes(payload.rating)) {
-            throw new APIError(400, reviewMessages.invalidRating);
+            throw new ApiError(400, reviewMessages.invalidRating);
         }
 
         return true;
@@ -62,7 +62,7 @@ class ReviewService {
     async checkCommentMaxLength(payload) {
         const maxLength = this.reviewConfig.commentMaxLength;
         if (payload.comment.length > maxLength) {
-            throw new APIError(400, reviewMessages.commentMaxLength(maxLength));
+            throw new ApiError(400, reviewMessages.commentMaxLength(maxLength));
         }
 
         return true;
@@ -108,7 +108,7 @@ class ReviewService {
         const validatedId = getValidatedId(_id);
         const review = await this.reviewModel.findById(validatedId).select(attSelection.review || '');
         if (!review) {
-            throw new APIError(404, processMessages.notFound(reviewMessages.review, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(reviewMessages.review, { id: _id }));
         }
         const fkSelections = await this.extractFKSelections(attSelection);
         return await review.populate(fkSelections);
@@ -127,11 +127,11 @@ class ReviewService {
 
     async updateRatingAndCommentById(_id, newRating, newComment) {
         if (!isDefined(newRating)) {
-            throw new APIError(400, reviewMessages.requiredRating);
+            throw new ApiError(400, reviewMessages.requiredRating);
         }
     
         if (!isDefined(newComment)) {
-            throw new APIError(400, reviewMessages.requiredComment);
+            throw new ApiError(400, reviewMessages.requiredComment);
         }
     
         await this.checkRating({ rating: newRating });

@@ -1,0 +1,57 @@
+{
+    "author-1": 
+    {
+        "publicId": "00001",
+        "name": "Đỗ Đức Thái",
+        "description": "TS. Toán ứng dụng" 
+    },
+
+    "author-2": 
+    {
+        "publicId": "00002",
+        "name": "Lê Đức Ánh",
+        "description": "ThS. Toán ứng dụng" 
+    },
+
+    "author-3": 
+    {
+        "publicId": "00003",
+        "name": "Nguyễn Quang Diệu",
+        "description": "ThS. Toán ứng dụng" 
+    },
+    
+    "author-4": 
+    {
+        "publicId": "00004",
+        "name": "Lê Văn Hiện",
+        "description": "ThS. Toán ứng dụng" 
+    },
+
+    "author-5": 
+    {
+        "publicId": "00005",
+        "name": "Trần Đình Kế",
+        "description": "ThS. Toán ứng dụng" 
+    },
+
+    "author-6": 
+    {
+        "publicId": "00006",
+        "name": "Đỗ Đức Giáo",
+        "description": "TS. Tin học ứng dụng" 
+    },
+
+    "author-7": 
+    {
+        "publicId": "00007",
+        "name": "Malcolm Mann",
+        "description": "" 
+    },
+
+    "author-8": 
+    {
+        "publicId": "00008",
+        "name": "Steve Taylore-Knowles",
+        "description": "" 
+    }
+}

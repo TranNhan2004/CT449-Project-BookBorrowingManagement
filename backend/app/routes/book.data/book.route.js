@@ -1,23 +1,27 @@
+const authController = require('../../controllers/book.accounts/auth.controller');
 const bookController = require('../../controllers/book.data/book.controller');
 
 const express = require('express');
 const router = express.Router();
 
-const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const { upload } = require('../../utils/uploadImage.util');
 
+
+router.use(authController.protect);
 
 router.route('/')
-    .get(bookController.findAll)
-    .post(upload.single('file'), bookController.create)
-    .delete(bookController.deleteAll);
-
+    .get(bookController.findAll);
 
 router.route('/:bookId')
-    .get(bookController.findById)
-    .patch(bookController.updateBasicInfoById)
-    .delete(bookController.deleteById);
+    .get(bookController.findById);
 
+
+router.use(authController.restrictToStaff(['admin']));
+router.route('/')
+    .post(upload.single('image'), bookController.create);
+
+router.route('/:bookId')
+    .patch(upload.single('image'), bookController.updateBasicInfoById)
+    .delete(bookController.deleteById);
 
 module.exports = router;

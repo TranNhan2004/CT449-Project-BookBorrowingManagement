@@ -7,7 +7,9 @@ const staffSchema = new mongoose.Schema({
     user: {
         type: ObjectId,
         ref: 'User',
+        unique: true,
         required: true,
+        index: true,
     },
     position: {
         type: String,

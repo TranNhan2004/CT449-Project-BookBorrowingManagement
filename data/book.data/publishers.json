@@ -1,0 +1,22 @@
+{
+    "publisher-1": 
+    {
+        "publicId": "10000",
+        "name": "Nhà Xuất Bản Giáo Dục Việt Nam",
+        "description": "" 
+    },
+
+    "publisher-2": 
+    {
+        "publicId": "10001",
+        "name": "Nhà Xuất Bản Đại Học Sư Phạm",
+        "description": "" 
+    },
+
+    "publisher-3": 
+    {
+        "publicId": "10002",
+        "name": "Nhà Xuất Bản Hồng Đức",
+        "description": "" 
+    }
+}

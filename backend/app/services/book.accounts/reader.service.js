@@ -1,6 +1,6 @@
 const { Reader, readerConfig } = require('../../models/book.accounts/reader.model');
 const { readerMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId } = require('../../utils/validation.util');
 const UserService = require('./user.service');
 
@@ -42,29 +42,26 @@ class ReaderService extends UserService {
         const validatedId = getValidatedId(_id);
         const reader = await this.readerModel.findById(validatedId).select(attSelection.reader || '');
         if (!reader) {
-            throw new APIError(404, processMessages.notFound(readerMessages.reader, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(readerMessages.reader, { id: _id }));
         }
 
         const fkSelections = await this.extractFKSelections(attSelection);
         return await reader.populate(fkSelections);
     }
 
+    async findOne(filter = {}, attSelection = {}, throwError = true) {
+        const reader = await this.readerModel.findOne(filter).select(attSelection.reader);
+        if (!reader && throwError) {
+            throw new ApiError(404, processMessages.notFound(readerMessages.reader, filter));
+        }
+        const fkSelections = await this.extractFKSelections(attSelection);
+        return reader.populate(fkSelections);
+    }
+
     async updateBasicInfoById(_id, payload) {
         const attSelection = { reader: 'user', user: '_id' };
         const reader = await this.findById(_id, attSelection);
         return await super.updateBasicInfoByIdForUser(reader.user._id, payload);
-    }
-
-    async updatePhoneNumberById(_id, newPhoneNumber) {
-        const attSelection = { reader: 'user', user: '_id' };
-        const reader = await this.findById(_id, attSelection);
-        return await super.updatePhoneNumberByIdForUser(reader.user._id, newPhoneNumber);
-    }
-
-    async updateEmailById(_id, newEmail) {
-        const attSelection = { reader: 'user', user: '_id' };
-        const reader = await this.findById(_id, attSelection);
-        return await super.updateEmailByIdForUser(reader.user._id, newEmail);
     }
 
     async updatePasswordById(_id, oldPassword, newPassword) {

@@ -1,110 +1,75 @@
 const ReviewService = require('../../services/book.services/review.service');
 const { reviewMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { asyncHandler } = require('../../utils/asyncHandler.util');  
 
 const reviewService = new ReviewService();
 const collName = reviewMessages.review; // The name of the collection
 
-exports.create = async (req, res, next) => {
+
+exports.create = asyncHandler(async (req, res) => {
     const payload = { ...req.body };
 
-    try {
-        const review = await reviewService.create(payload);
-        return res.status(201).json({ 
-            success: true, 
-            message: processMessages.success(`Tạo thông tin ${collName} mới`),
-            data: review 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, processMessages.serverError(err.message))
-        );
-    }
-};
-// `tạo thông tin ${collName} mới`
-
-exports.findAll = async (req, res, next) => {
-    const query = { ...req.query };
-    const attSelection = { review: '' };
-
-    try {
-        const reviews = await reviewService.findAll(query, attSelection);
-        return res.status(200).json({ 
-            success: true, 
-            data: reviews 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, processMessages.serverError(`tìm tất cả ${collName} với truy vấn 
-                                                                    ${JSON.stringify(query)}`.replace(/\s+/g, ' ')))
-        );
-    }
-};
+    const review = await reviewService.create(payload);
+    return res.status(201).json({
+        success: true,
+        message: processMessages.success(`Tạo thông tin ${collName} mới`),
+        data: review
+    });
+}, processMessages.serverError(`Tạo thông tin ${collName} mới`));
 
 
-exports.findById = async (req, res, next) => {
+exports.findAll = asyncHandler(async (req, res) => {
+    const filter = req.query.filter ? JSON.parse(req.query.filter) : {};
+    const attSelection = req.query.projection ? JSON.parse(req.query.projection) : {};
+
+    const reviews = await reviewService.findAll(filter, attSelection);
+    return res.status(200).json({
+        success: true,
+        data: reviews
+    });
+}, processMessages.serverError(`Tìm tất cả ${collName}`));
+
+
+exports.findById = asyncHandler(async (req, res) => {
     const _id = req.params.reviewId;
     const attSelection = { review: '' };
-    
-    try {
-        const review = await reviewService.findById(_id, attSelection);
-        return res.status(200).json({ 
-            success: true, 
-            data: review 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, processMessages.serverError(`tìm thông tin ${collName} với ID: ${_id}`))
-        );
-    }
-};
 
-exports.updateRatingAndCommentById = async (req, res, next) => {
+    const review = await reviewService.findById(_id, attSelection);
+    return res.status(200).json({
+        success: true,
+        data: review
+    });
+}, processMessages.serverError(`Tìm thông tin ${collName} với ID`));
+
+
+exports.updateRatingAndCommentById = asyncHandler(async (req, res) => {
     const _id = req.params.reviewId;
     const { newRating, newComment } = req.body;
 
-    try {
-        const result = await reviewService.updateRatingAndCommentById(_id, newRating, newComment);
-        return res.status(200).json({ 
-            success: true, 
-            message: processMessages.success(`Cập nhật chỉ số đánh giá và nội dung bình luận của 
-                                            ${collName} theo ID: ${_id}`.replace(/\s+/g, ' ')),
-            data: result
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, processMessages.serverError(`cập nhật chỉ số đánh giá và nội dung bình luận của 
-                                                                ${collName} theo ID: ${_id}`.replace(/\s+/g, ' ')))
-        );
-    }
-};
+    const result = await reviewService.updateRatingAndCommentById(_id, newRating, newComment);
+    return res.status(200).json({
+        success: true,
+        message: processMessages.success(`Cập nhật chỉ số đánh giá và nội dung bình luận của ${collName} theo ID`),
+        data: result
+    });
+}, processMessages.serverError(`Cập nhật chỉ số đánh giá và nội dung bình luận của ${collName} theo ID`));
 
-exports.deleteById = async (req, res, next) => {
+
+exports.deleteById = asyncHandler(async (req, res) => {
     const _id = req.params.reviewId;
 
-    try {
-        await reviewService.deleteById(_id);
-        return res.status(200).json({ 
-            success: true, 
-            message: processMessages.success(`Xoá ${collName} theo ID: ${_id}`) 
-        });
-    } catch (err) {
-        next(err instanceof APIError? 
-            err : new APIError(500, processMessages.serverError(`xoá ${collName} theo ID: ${_id}`))
-        );
-    }
-};
+    await reviewService.deleteById(_id);
+    return res.status(200).json({
+        success: true,
+        message: processMessages.success(`Xoá ${collName} theo ID`)
+    });
+}, processMessages.serverError(`Xoá ${collName} theo ID`));
 
-exports.deleteAll = async(_req, res, next) => {
-    try {
-        const deletedCount = await reviewService.deleteAll();
-        return res.status(200).json({ 
-            success: true, 
-            message: processMessages.success(`Xoá tất cả (${deletedCount}) ${collName}`) 
-        });
-    } catch (err) {
-        next(err instanceof APIError ? 
-            err : new APIError(500, processMessages.serverError(`xoá tất cả ${collName}`))
-        );
-    }
-}
+
+exports.deleteAll = asyncHandler(async (_req, res) => {
+    const deletedCount = await reviewService.deleteAll();
+    return res.status(200).json({
+        success: true,
+        message: processMessages.success(`Xoá tất cả (${deletedCount}) ${collName}`)
+    });
+}, processMessages.serverError(`Xoá tất cả ${collName}`));

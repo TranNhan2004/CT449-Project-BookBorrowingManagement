@@ -1,0 +1,10 @@
+{
+    "book-recommendation-1":
+    {
+        "recommendedBy": "673768151d17d03eafd10933",
+        "bookTitle": "ABC",
+        "authorsName": ["XYZ", "ABC", "CDE"],
+        "publishedYear": 2020,
+        "description": "Ajjhdjjdsjhjsdhjd"
+    }
+}

@@ -2,6 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 
+const cookieParser = require('cookie-parser');
+
+const authRouter = require('./app/routes/book.accounts/auth.route');
+
 const staffRouter = require('./app/routes/book.accounts/staff.route');
 const readerRouter = require('./app/routes/book.accounts/reader.route');
 
@@ -17,8 +21,14 @@ const bookRecommendationRouter = require('./app/routes/book.services/bookRecomme
 const reservationRouter = require('./app/routes/book.services/reservation.route');
 const bookBorrowingRouter = require('./app/routes/book.services/bookBorrowing.route');
 
+const { errorHandler } = require('./app/utils/error.util');
+
+
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/auth', authRouter);
 
 app.use('/api/staffs', staffRouter);
 app.use('/api/readers', readerRouter);
@@ -35,11 +45,6 @@ app.use('/api/book-recommendations/', bookRecommendationRouter);
 app.use('/api/reservations', reservationRouter);
 app.use('/api/book-borrowings', bookBorrowingRouter);
 
-app.use((err, _req, res, _next) => {
-    console.log(err.stack);
-    return res.status(err.statusCode).json({
-        message: err.message
-    });
-})
+app.use(errorHandler);
 
 module.exports = app;

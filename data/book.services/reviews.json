@@ -1,0 +1,25 @@
+{
+    "review-1": 
+    {
+        "reader": "673768151d17d03eafd10933",
+        "book": "6734c7f79cf6ab564123770f",
+        "rating": 5,
+        "comment": "Sách rất hay"
+    },
+
+    "review-2": 
+    {
+        "reader": "673768151d17d03eafd10933",
+        "book": "673587f3edd3760e2b821e52",
+        "rating": 4,
+        "comment": "Sách khá hay"
+    },
+
+    "review-3": 
+    {
+        "reader": "673768311d17d03eafd10939",
+        "book": "67358a16ea7be9b3bef071f3",
+        "rating": 3,
+        "comment": "Sách cũng hay"
+    }
+}

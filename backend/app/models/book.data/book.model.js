@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { ObjectId, String, Number, Decimal128, Buffer } = mongoose.Schema.Types;
+const { ObjectId, String, Number, Buffer } = mongoose.Schema.Types;
 const { db } = require('../../config');
 const bookConfig = db.collections.book;
 
@@ -15,7 +15,6 @@ const bookSchema = new mongoose.Schema({
             type: ObjectId,
             ref: 'Author',
             required: true,
-            unique: true
         }
     ],
     publisher: {
@@ -33,7 +32,6 @@ const bookSchema = new mongoose.Schema({
             type: ObjectId, 
             ref: 'Topic', 
             required: true,
-            unique: true
         }
     ],
     title: {
@@ -46,7 +44,7 @@ const bookSchema = new mongoose.Schema({
         required: true
     },
     price: {
-        type: Decimal128,
+        type: Number,
         min: bookConfig.minPrice,
         required: true
     },
@@ -68,11 +66,6 @@ const bookSchema = new mongoose.Schema({
         default: 0,
         required: true
     },
-    language: {
-        type: String,
-        enum: bookConfig.languageEnum,
-        required: true
-    },
     description: {
         type: String,
         trim: true,
@@ -84,11 +77,6 @@ const bookSchema = new mongoose.Schema({
         max: 5, 
         default: 0,
         required: true,
-    }, 
-    isVisible: {
-        type: Boolean,
-        default: true,
-        required: true
     }
 });
 

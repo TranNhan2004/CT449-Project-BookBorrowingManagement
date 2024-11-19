@@ -1,6 +1,6 @@
 const { BookRecommendation, bookRecommendationConfig } = require('../../models/book.services/bookRecommendation.model');
 const { bookRecommendationMessages, processMessages } = require('../../messages/vi.message');
-const { APIError } = require('../../utils/error.util');
+const { ApiError } = require('../../utils/error.util');
 const { getValidatedId, isDefined } = require('../../utils/validation.util');
 
 const ReaderService = require('../book.accounts/reader.service');
@@ -35,27 +35,27 @@ class BookRecommendationService {
 
     async checkRequiredFields(payload) {
         if (!isDefined(payload.recommendedBy)) {
-            throw new APIError(400, bookRecommendationMessages.requiredRecommendedBy);
+            throw new ApiError(400, bookRecommendationMessages.requiredRecommendedBy);
         }
         
         if (!isDefined(payload.bookTitle)) {
-            throw new APIError(400, bookRecommendationMessages.requiredBookTitle);
+            throw new ApiError(400, bookRecommendationMessages.requiredBookTitle);
         }
 
         if (!isDefined(payload.authorsName) || payload.authorsName.length === 0) {
-            throw new APIError(400, bookRecommendationMessages.requiredAuthorsName);
+            throw new ApiError(400, bookRecommendationMessages.requiredAuthorsName);
         }
 
         if (!isDefined(payload.publishedYear)) {
-            throw new APIError(400, bookRecommendationMessages.requiredPublishedYear);
+            throw new ApiError(400, bookRecommendationMessages.requiredPublishedYear);
         }
 
         if (!isDefined(payload.bookCoverImage)) {
-            throw new APIError(400, bookRecommendationMessages.requiredBookCoverImage);
+            throw new ApiError(400, bookRecommendationMessages.requiredBookCoverImage);
         }
 
         if (!isDefined(payload.description)) {
-            throw new APIError(400, bookRecommendationMessages.requiredDescription);
+            throw new ApiError(400, bookRecommendationMessages.requiredDescription);
         }
 
         return true;
@@ -67,13 +67,13 @@ class BookRecommendationService {
         const minYear = this.bookRecommendationConfig.getMinPublishedYear();
         const maxYear = this.bookRecommendationConfig.getMaxPublishedYear();
         if (payload.publishedYear < minYear || payload.publishedYear > maxYear) {
-            throw new APIError(400, bookRecommendationMessages.invalidPublishedYear(minYear, maxYear));
+            throw new ApiError(400, bookRecommendationMessages.invalidPublishedYear(minYear, maxYear));
         }
 
         const lowerAuthorsName = payload.authorsName.map(authorName => authorName.toLowerCase().replace(/\s+/g, ''));
         const authorsNameSet = new Set(lowerAuthorsName)
         if (authorsNameSet.size !== lowerAuthorsName.length) {
-            throw new APIError(400, bookRecommendationMessages.existedAuthorName);
+            throw new ApiError(400, bookRecommendationMessages.existedAuthorName);
         }
 
         const readerAttSelection = { reader: '_id' };
@@ -104,7 +104,7 @@ class BookRecommendationService {
         const bookRecommendation = await this.bookRecommendationModel.findById(validatedId)
                                                                 .select(attSelection.bookRecommendation || '');
         if (!bookRecommendation) {
-            throw new APIError(404, processMessages.notFound(bookRecommendationMessages.bookRecommendation, { id: _id }));
+            throw new ApiError(404, processMessages.notFound(bookRecommendationMessages.bookRecommendation, { id: _id }));
         }
         const fkSelections = await this.extractFKSelections(attSelection);
         return await bookRecommendation.populate(fkSelections);
@@ -112,22 +112,22 @@ class BookRecommendationService {
 
     async updateStatusById(_id, approvedBy, status) {
         if (!isDefined(approvedBy)) {
-            throw new APIError(400, bookRecommendationMessages.requiredApprovedBy);
+            throw new ApiError(400, bookRecommendationMessages.requiredApprovedBy);
         }
         if (!isDefined(status)) {
-            throw new APIError(400, bookRecommendationMessages.requiredStatus);
+            throw new ApiError(400, bookRecommendationMessages.requiredStatus);
         }
     
         const statusEnum = this.bookRecommendationConfig.statusEnum;
         if (!statusEnum.includes(status)) {
-            throw new APIError(400, bookRecommendationMessages.invalidStatus);
+            throw new ApiError(400, bookRecommendationMessages.invalidStatus);
         }
     
         const attSelection = { bookRecommendation: '_id status' };
         const bookRecommendation = await this.findById(_id, attSelection);
     
         if (bookRecommendation.status !== statusEnum[0]) {
-            throw new APIError(400, bookRecommendationMessages.canNotChangeStatus);
+            throw new ApiError(400, bookRecommendationMessages.canNotChangeStatus);
         }
     
         await staffService.findById(approvedBy);
