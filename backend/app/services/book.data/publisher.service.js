@@ -2,7 +2,7 @@ const { Publisher } = require('../../models/book.data/publisher.model');
 const { Book } = require('../../models/book.data/book.model');
 const { publisherMessages, bookMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util'); 
+const { getValidatedId, isDefined } = require('../../utils/validationData.util'); 
 
 class PublisherService {
 

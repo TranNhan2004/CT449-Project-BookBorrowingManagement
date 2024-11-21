@@ -31,7 +31,7 @@ exports.findAll = asyncHandler(async (req, res) => {
 
 exports.findById = asyncHandler(async (req, res) => {
     const _id = req.params.favoriteId;
-    const attSelection = { favorite: '' };
+    const attSelection = req.query.projection ? JSON.parse(req.query.projection) : {};
 
     const favorite = await favoriteService.findById(_id, attSelection);
     return res.status(200).json({

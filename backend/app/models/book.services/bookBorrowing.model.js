@@ -14,7 +14,7 @@ const bookBorrowingSchema = new mongoose.Schema({
         ref: 'BookItem',
         required: true
     },
-    approvedBy: {
+    addedBy: {
         type: ObjectId,
         ref: 'Staff',
         required: true

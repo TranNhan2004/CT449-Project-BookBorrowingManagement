@@ -8,7 +8,7 @@ const { bookMessages,
         reviewMessages, 
         processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 const { formatPublicId } = require('../../utils/publicIdFormatter.util');
 
 const AuthorService = require('./author.service');

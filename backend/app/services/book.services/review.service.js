@@ -1,7 +1,7 @@
 const { Review, reviewConfig } = require('../../models/book.services/review.model');
 const { reviewMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 
 const ReaderService = require('../book.accounts/reader.service');
 const BookService = require('../book.data/book.service');
@@ -120,7 +120,7 @@ class ReviewService {
         const reviews = await this.findAll(filter, attSelection);
 
         const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-        const averageRating = totalRating / reviews.length;
+        const averageRating = totalRating / reviews.length || 0;
 
         return await bookService.updateAverageRatingById(bookId, averageRating);
     }
@@ -157,11 +157,11 @@ class ReviewService {
         return result.deletedCount;
     }
 
-    async deleteAll() {
+    async deleteAll(filter = {}) {
         const attSelection = { review: '_id book', book: '_id' };
-        const reviews = await this.findAll({}, attSelection);
+        const reviews = await this.findAll(filter, attSelection);
 
-        const result = await this.reviewModel.deleteMany({});
+        const result = await this.reviewModel.deleteMany(filter);
         await Promise.all(reviews.map(async (review) => 
             await bookService.updateAverageRatingById(review.book._id, 0)
         ));

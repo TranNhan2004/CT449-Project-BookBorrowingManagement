@@ -5,7 +5,7 @@ const { asyncHandler } = require('../../utils/asyncHandler.util');
 const bookBorrowingService = new BookBorrowingService();
 const collName = bookBorrowingMessages.bookBorrowing; // The name of the collection
 
-// Tạo thông tin bookBorrowing mới
+
 exports.create = asyncHandler(async (req, res) => {
     const payload = { ...req.body };
 

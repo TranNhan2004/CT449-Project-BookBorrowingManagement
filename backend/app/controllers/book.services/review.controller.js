@@ -19,6 +19,7 @@ exports.create = asyncHandler(async (req, res) => {
 
 
 exports.findAll = asyncHandler(async (req, res) => {
+    console.log(req.query.filter);
     const filter = req.query.filter ? JSON.parse(req.query.filter) : {};
     const attSelection = req.query.projection ? JSON.parse(req.query.projection) : {};
 
@@ -66,8 +67,9 @@ exports.deleteById = asyncHandler(async (req, res) => {
 }, processMessages.serverError(`Xoá ${collName} theo ID`));
 
 
-exports.deleteAll = asyncHandler(async (_req, res) => {
-    const deletedCount = await reviewService.deleteAll();
+exports.deleteAll = asyncHandler(async (req, res) => {
+    const filter = req.query.filter ? JSON.parse(req.query.filter) : {};
+    const deletedCount = await reviewService.deleteAll(filter);
     return res.status(200).json({
         success: true,
         message: processMessages.success(`Xoá tất cả (${deletedCount}) ${collName}`)

@@ -1,7 +1,7 @@
 const { Staff, staffConfig } = require('../../models/book.accounts/staff.model');
 const { staffMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 const UserService = require('./user.service');
 
 class StaffService extends UserService {
@@ -75,10 +75,10 @@ class StaffService extends UserService {
         return await super.updateBasicInfoByIdForUser(staff.user._id, payload);
     }
 
-    async updatePasswordById(_id, oldPassword, newPassword) {
+    async updatePasswordById(_id, oldPassword, newPassword, confirmedNewPassword) {
         const attSelection = { staff: 'user', user: '_id' };
         const staff = await this.findById(_id, attSelection);
-        return await super.updatePasswordByIdForUser(staff.user._id, oldPassword, newPassword);
+        return await super.updatePasswordByIdForUser(staff.user._id, oldPassword, newPassword, confirmedNewPassword);
     }
 
     async updateValidationById(_id, isValid) {

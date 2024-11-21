@@ -44,18 +44,6 @@ exports.findById = asyncHandler(async (req, res) => {
 }, processMessages.serverError(`Tìm thông tin ${collName} với ID`));
 
 
-exports.findOne = asyncHandler(async (req, res) => {
-    const filter = { ...req.query };
-    const attSelection = { reservation: '' };
-
-    const reservation = await reservationService.findOne(filter, attSelection);
-    return res.status(200).json({
-        success: true,
-        data: reservation
-    });
-}, processMessages.serverError(`Tìm thông tin ${collName} với truy vấn`));
-
-
 exports.checkDueDate = asyncHandler(async (req, res) => {
     const { reservedBy } = req.body;
 

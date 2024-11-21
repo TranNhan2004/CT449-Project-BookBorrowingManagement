@@ -17,7 +17,6 @@ const bookItemRouter = require('./app/routes/book.data/bookItem.route');
 
 const favoriteRouter = require('./app/routes/book.services/favorite.route');
 const reviewRouter = require('./app/routes/book.services/review.route');
-const bookRecommendationRouter = require('./app/routes/book.services/bookRecommendation.route');
 const reservationRouter = require('./app/routes/book.services/reservation.route');
 const bookBorrowingRouter = require('./app/routes/book.services/bookBorrowing.route');
 
@@ -41,7 +40,6 @@ app.use('/api/book-items', bookItemRouter);
 
 app.use('/api/favorites', favoriteRouter);
 app.use('/api/reviews', reviewRouter);
-app.use('/api/book-recommendations/', bookRecommendationRouter);
 app.use('/api/reservations', reservationRouter);
 app.use('/api/book-borrowings', bookBorrowingRouter);
 

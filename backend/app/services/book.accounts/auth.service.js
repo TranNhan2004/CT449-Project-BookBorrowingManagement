@@ -3,7 +3,7 @@ const { jwtEnv, cookieEnv } = require('../../config');
 
 const { authMessages, userMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { isDefined } = require('../../utils/validation.util');
+const { isDefined } = require('../../utils/validationData.util');
 const { comparePassword } = require('../../utils/hash.util');
 
 const UserService = require('./user.service');

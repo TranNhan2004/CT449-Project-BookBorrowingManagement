@@ -8,12 +8,12 @@
     "reservation-2":
     {
         "reservedBy": "673768151d17d03eafd10933",
-        "bookItem": "673710f0a85886dea1c520b7"
+        "bookItem": "673dc0be2a4b22e32427596f"
     },
 
     "reservation-3":
     {
-        "reservedBy": "673768311d17d03eafd10939",
-        "bookItem": "673710e8a85886dea1c520b0"
+        "reservedBy": "673768151d17d03eafd10933",
+        "bookItem": "673dc0bb2a4b22e324275966"
     }
 }

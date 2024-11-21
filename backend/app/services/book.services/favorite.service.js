@@ -1,7 +1,7 @@
 const { Favorite } = require('../../models/book.services/favorite.model');
 const { favoriteMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 
 const ReaderService = require('../book.accounts/reader.service');
 const BookService = require('../book.data/book.service');

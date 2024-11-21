@@ -6,7 +6,7 @@ const { bookItemMessages,
         reservationMessages, 
         processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 const { formatPublicId } = require('../../utils/publicIdFormatter.util');
 const BookService = require('./book.service');
 const StaffService = require('../book.accounts/staff.service');

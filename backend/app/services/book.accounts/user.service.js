@@ -1,8 +1,8 @@
 const { User, userConfig } = require('../../models/book.accounts/user.model');
 const { userMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
-const { hashPassword } = require('../../utils/hash.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
+const { hashPassword, comparePassword } = require('../../utils/hash.util');
 
 class UserService {
     constructor() {
@@ -158,11 +158,11 @@ class UserService {
 
         // Check existing user
         const attSelection = { user: '_id' };
-        const existingPhone = await this.findOneForUser({ phone: payload.phone }, attSelection);
+        const existingPhone = await this.findOneForUser({ phone: payload.phone }, attSelection, false);
         if (existingPhone) {
             throw new ApiError(409, userMessages.existedPhone);
         }
-        const existingEmail = await this.findOneForUser({ email: payload.email }, attSelection);
+        const existingEmail = await this.findOneForUser({ email: payload.email }, attSelection, false);
         if (existingEmail) {
             throw new ApiError(409, userMessages.existedEmail);
         }
@@ -210,8 +210,8 @@ class UserService {
         if (isDefined(payload.phone)) {
             await this.checkPhoneNumberForUser(payload);
 
-            const existingPhone = await this.findOneForUser({ phone: payload.phone }, { user: '_id' });
-            if (existingPhone && existingPhone._id != _id) {
+            const existingPhone = await this.findOneForUser({ phone: payload.phone }, { user: '_id' }, false);
+            if (existingPhone && existingPhone._id.toString() !== _id.toString()) {
                 throw new ApiError(409, userMessages.existedPhone);
             }
         }
@@ -219,8 +219,8 @@ class UserService {
         if (isDefined(payload.email)) {
             await this.checkEmailForUser(payload);
 
-            const existingEmail = await this.findOneForUser({ email: payload.email }, { user: '_id' });
-            if (existingEmail && existingPhone._id != _id) {
+            const existingEmail = await this.findOneForUser({ email: payload.email }, { user: '_id' }, false);
+            if (existingEmail && existingEmail._id.toString() !== _id.toString()) {
                 throw new ApiError(409, userMessages.existedEmail);
             }
         }
@@ -233,15 +233,18 @@ class UserService {
         return await user.save();
     }
     
-    async updatePasswordByIdForUser(_id, oldPassword, newPassword) {
+    async updatePasswordByIdForUser(_id, oldPassword, newPassword, confirmedNewPassword) {
         await this.checkPasswordForUser({ password: newPassword });
-    
+        if (confirmedNewPassword !== newPassword) {
+            throw new ApiError(400, userMessages.confirmedPasswordMismatch);
+        }
+
         const user = await this.findByIdForUser(_id); 
-        if (user.password !== oldPassword) {
+        if (!(await comparePassword(oldPassword, user.password))) {
             throw new ApiError(400, userMessages.incorrectOldPassword);
         }
     
-        user.password = newPassword; 
+        user.password = await hashPassword(newPassword); 
     
         return await user.save();
     }
@@ -267,7 +270,7 @@ class UserService {
 
     async updateValidationByIdForUser(_id, isValid) {
         const user = await this.findByIdForUser(_id); // Fetch the entire document
-        user.isValid = isValid; // Update the validation status
+        user.isValid = isValid; // Update the validationData status
     
         // Save the document
         return await user.save();

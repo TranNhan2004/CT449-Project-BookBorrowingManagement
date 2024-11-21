@@ -2,7 +2,7 @@ const { Topic, topicConfig } = require('../../models/book.data/topic.model');
 const { Book } = require('../../models/book.data/book.model');
 const { topicMessages, bookMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 
 
 class TopicService {

@@ -1,7 +1,7 @@
 const { BookBorrowing, bookBorrowingConfig } = require('../../models/book.services/bookBorrowing.model');
 const { bookBorrowingMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 
 const ReaderService = require('../book.accounts/reader.service');
 const BookItemService = require('../book.data/bookItem.service');
@@ -27,8 +27,8 @@ class BookBorrowingService {
         if (!isDefined(payload.bookItem)) {
             throw new ApiError(400, bookBorrowingMessages.requiredBookItem);
         }
-        if (!isDefined(payload.approvedBy)) {
-            throw new ApiError(400, bookBorrowingMessages.requiredApprovedBy);
+        if (!isDefined(payload.addedBy)) {
+            throw new ApiError(400, bookBorrowingMessages.requiredAddedBy);
         }
 
         const readerAttSelection = { reader: '_id rank' };      
@@ -37,8 +37,10 @@ class BookBorrowingService {
         const [reader, bookItem, ] = await Promise.all([
             readerService.findById(payload.borrowedBy, readerAttSelection),
             bookItemService.findById(payload.bookItem, bookItemAttSelection),
-            staffService.findById(payload.approvedBy, staffAttSelection)
+            staffService.findById(payload.addedBy, staffAttSelection)
         ]);
+
+        console.log(bookItem);
         
         const bookItemStatusEnum = bookItemService.bookItemConfig.statusEnum;
         if (bookItem.status !== bookItemStatusEnum[0] && bookItem.status !== bookItemStatusEnum[1]) {
@@ -74,7 +76,7 @@ class BookBorrowingService {
         const bookBorrowingData = {
             borrowedBy: payload.borrowedBy,
             bookItem: payload.bookItem,
-            approvedBy: payload.approvedBy,
+            addedBy: payload.addedBy,
             borrowedDate: currentDate,
             dueDate: dueDate
         };
@@ -93,8 +95,8 @@ class BookBorrowingService {
         if (attSelection.bookItem) {
             fkSelections.push({ path: 'bookItem', select: attSelection.bookItem });
         }
-        if (attSelection.approvedBy) {
-            fkSelections.push({ path: 'approvedBy', select: attSelection.approvedBy });
+        if (attSelection.addedBy) {
+            fkSelections.push({ path: 'addedBy', select: attSelection.addedBy });
         }
 
         return fkSelections;
@@ -123,6 +125,8 @@ class BookBorrowingService {
         if (isDefined(bookBorrowing.returnedDate)) {
             throw new ApiError(400, bookBorrowingMessages.returned);
         }
+
+        await readerService.updateCurrentBorrowingQuantityById(bookBorrowing.borrowedBy, -1);
     
         const bookItemStatusEnum = bookItemService.bookItemConfig.statusEnum;
         await bookItemService.updateStatusById(bookBorrowing.bookItem, bookItemStatusEnum[0]);

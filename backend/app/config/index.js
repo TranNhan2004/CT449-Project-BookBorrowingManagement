@@ -55,12 +55,7 @@ module.exports = {
             },
             bookItem: {
                 publicIdSuffixLength: 2,
-                statusEnum: ['can-reserve', 'reserved', 'borrowed', 'read-only'],
-            },
-            bookRecommendation: {
-                getMinPublishedYear: () => new Date().getFullYear() - 200,
-                getMaxPublishedYear: () => new Date().getFullYear(),
-                statusEnum: ['pending', 'accepted', 'rejected'],
+                statusEnum: ['available', 'reserved', 'borrowed', 'read-only'],
             },
             review: {
                 commentMaxLength: 300,

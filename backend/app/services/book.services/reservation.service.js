@@ -1,7 +1,7 @@
 const { Reservation, reservationConfig } = require('../../models/book.services/reservation.model');
 const { reservationMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 
 const ReaderService = require('../book.accounts/reader.service');
 const BookItemService = require('../book.data/bookItem.service');

@@ -2,7 +2,7 @@ const { Author } = require('../../models/book.data/author.model');
 const { Book } = require('../../models/book.data/book.model');
 const { authorMessages, bookMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId, isDefined } = require('../../utils/validation.util');
+const { getValidatedId, isDefined } = require('../../utils/validationData.util');
 
 class AuthorService {
 

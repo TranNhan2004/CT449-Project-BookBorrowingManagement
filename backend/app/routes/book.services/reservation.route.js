@@ -12,7 +12,7 @@ router.route('/')
 
 router.route('/:reservationId')
     .get(reservationController.findById)
-    .delete(authController.restrictToReader(), reservationController.deleteById);
+    .delete(reservationController.deleteById);
 
     
 module.exports = router;

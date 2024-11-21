@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.use(authController.protect);
 
-router.use(authController.restrictToStaff());
 router.route('/').get(publisherController.findAll);
 router.route('/:publisherId').get(publisherController.findById);
 

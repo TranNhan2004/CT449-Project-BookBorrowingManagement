@@ -1,7 +1,7 @@
 const { Reader, readerConfig } = require('../../models/book.accounts/reader.model');
 const { readerMessages, processMessages } = require('../../messages/vi.message');
 const { ApiError } = require('../../utils/error.util');
-const { getValidatedId } = require('../../utils/validation.util');
+const { getValidatedId } = require('../../utils/validationData.util');
 const UserService = require('./user.service');
 
 class ReaderService extends UserService {
@@ -64,10 +64,10 @@ class ReaderService extends UserService {
         return await super.updateBasicInfoByIdForUser(reader.user._id, payload);
     }
 
-    async updatePasswordById(_id, oldPassword, newPassword) {
+    async updatePasswordById(_id, oldPassword, newPassword, confirmedNewPassword) {
         const attSelection = { reader: 'user', user: '_id' };
         const reader = await this.findById(_id, attSelection);
-        return await super.updatePasswordByIdForUser(reader.user._id, oldPassword, newPassword);
+        return await super.updatePasswordByIdForUser(reader.user._id, oldPassword, newPassword, confirmedNewPassword);
     }
 
     async updateRankById(_id) {
@@ -105,7 +105,8 @@ class ReaderService extends UserService {
 
     async updateCurrentBorrowingQuantityById(_id, quantityChanges) {
         const reader = await this.findById(_id);  
-        reader.currentBorrowedQuantity = Math.max(reader.currentBorrowingQuantity + quantityChanges, 0);
+        reader.currentBorrowingQuantity = Math.max(reader.currentBorrowingQuantity + quantityChanges, 0);
+        console.log(reader);
         return await reader.save();
     }
     

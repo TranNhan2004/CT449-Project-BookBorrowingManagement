@@ -43,7 +43,8 @@ module.exports = {
         incorrectOldPassword: 'Mật khẩu cũ không chính xác. Mời bạn nhập lại!',
         invalidGender: 'Giới tính không hợp lệ!',
         invalidRole: 'Vai trò không hợp lệ!',
-        invalidBirth: (minDate, maxDate) => `Ngày sinh không hợp lệ, phải nằm trong khoảng ${minDate} đến ${maxDate}!`
+        invalidBirth: (minDate, maxDate) => `Ngày sinh không hợp lệ, phải nằm trong khoảng ${minDate} đến ${maxDate}!`,
+        confirmedPasswordMismatch: 'Thông tin nhập lại mật khẩu không khớp với mật khẩu mới!'
     },
 
     staffMessages: {
@@ -117,27 +118,10 @@ module.exports = {
         bookBorrowing: 'bản ghi mượn sách',
         requiredBorrowedBy: 'Độc giả không được để trống!',
         requiredBookItem: 'Bản sao của sách mượn không được để trống!',
-        requiredApprovedBy: 'Nhân viên phê duyệt không được để trống!',
+        requiredAddedBy: 'Nhân viên thêm bản ghi mượn sách không được để trống!',
         canNotBorrow: 'Bản sao sách đã được mượn hoặc đã có người đặt trước hoặc không còn tồn tại!',
         returned: 'Bản sao sách đã trả rồi!',
         maxBorrowBookItems: (maxQuantity) => `Chỉ có thể mượn tối đa ${maxQuantity} bản sao sách!` 
-    },
-
-    bookRecommendationMessages: {
-        bookRecommendation: 'bản ghi đề xuất sách hay',
-        existedAuthorName: 'Tác giả của sách đề xuất đã tồn tại, vui lòng nhập tên tác giả khác!',
-        requiredRecommendedBy: 'Độc giả đề xuất không được để trống!',
-        requiredApprovedBy: 'Nhân viên duyệt đề xuất sách hay không được để trống!',
-        requiredBookTitle: 'Tiêu đề của sách đề xuất không được để trống!',
-        requiredAuthorsName: 'Tác giả của sách đề xuất không được để trống!',
-        requiredPublishedYear: 'Năm xuất bản của sách đề xuất không được để trống!',
-        requiredBookCoverImage: 'Ảnh bìa của sách đề xuất không được để trống!',
-        requiredDescription: 'Mô tả của sách đề xuất không được để trống!',
-        requiredStatus: 'Trạng thái của bản ghi đề xuất không được để trống!',
-        invalidPublishedYear: (minYear, maxYear) =>
-            `Năm sản xuất của sách phải nằm trong khoảng năm ${minYear} đến năm ${maxYear}!`,
-        invalidStatus: 'Trạng thái của bản ghi đề xuất không hợp lệ!',
-        canNotChangeStatus: 'Không thể đổi trạng thái!'
     },
 
     favoriteMessages: {

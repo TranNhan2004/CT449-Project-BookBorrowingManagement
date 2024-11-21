@@ -96,7 +96,6 @@ exports.updateBasicInfoById = asyncHandler(async (req, res) => {
 }, processMessages.serverError(`Cập nhật thông tin cơ bản của ${collName} theo ID`));
 
 
-
 exports.deleteById = asyncHandler(async (req, res) => {
     const _id = req.params.bookId;
 
