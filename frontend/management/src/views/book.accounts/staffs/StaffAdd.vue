@@ -79,7 +79,7 @@
 
       <!-- Nút -->
       <div class="form-group">
-        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+        <button type="submit" class="btn btn-primary">Tạo</button>
         <button type="button" class="btn btn-secondary ml-2" @click="cancel">Thoát</button>
       </div>
     </VForm>

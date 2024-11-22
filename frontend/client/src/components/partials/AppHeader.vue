@@ -1,13 +1,11 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <!-- Logo và tên ứng dụng -->
       <router-link to="/" class="navbar-brand d-flex align-items-center">
         <img src="@/assets/images/logo.png" alt="Logo" class="d-inline-block align-text-top" height="40">
         <span class="ms-2">MY-LIBRARY</span>
       </router-link>
 
-      <!-- Menu điều hướng -->
       <button 
         class="navbar-toggler" 
         type="button" 

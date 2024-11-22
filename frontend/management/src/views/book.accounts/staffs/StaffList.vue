@@ -1,23 +1,21 @@
 <template>
   <div class="container mt-4">
-    <!-- Input Search -->
     <div class="mb-4">
       <StaffSearch @search="handleSearch" />
     </div>
 
-    <!-- Hiển thị danh sách nhân viên -->
+
     <div v-if="staffsToDisplay.length === 0" class="text-center mt-4">
       <p class="text-muted"><i>Không tìm thấy dữ liệu phù hợp.</i></p>
     </div>
     <div v-else>
       <div v-for="staff in staffsToDisplay" :key="staff._id" class="mb-3">
-        <StaffCard :staff="staff" />
+        <StaffCard :staff="staff" v-on:delete="handleDelete" v-on:changeValidation="handleChangeValidation"/>
       </div>
 
-      <!-- Phân trang -->
+
       <nav>
         <ul class="pagination justify-content-center">
-          <!-- Nút Trước -->
           <li 
             class="page-item" 
             :class="{ disabled: currentPage === 1 }"
@@ -28,7 +26,7 @@
             </a>
           </li>
 
-          <!-- Các trang -->
+
           <li 
             v-for="page in visiblePages" 
             :key="page"
@@ -39,7 +37,7 @@
             <a class="page-link" href="#">{{ page }}</a>
           </li>
 
-          <!-- Nút Tiếp -->
+
           <li 
             class="page-item" 
             :class="{ disabled: currentPage === totalPages }"
@@ -53,7 +51,7 @@
       </nav>
     </div>
 
-    <!-- Nút Thêm Nhân Viên -->
+  
     <div class="text-center mt-4">
       <button class="btn btn-success" @click="goToStaffAdd">
         <i class="fas fa-plus"></i> Thêm nhân viên
@@ -171,6 +169,24 @@ const handleSearch = ({ searchValue, positionFilter, statusFilter }) => {
 
   currentPage.value = 1;
 };
+
+const handleDelete = async (staffId) => {
+  await executeWithSwal(async () => {
+    const response = await staffService.delete(staffId);
+    const index = staffs.value.findIndex((staff) => staff._id === staffId);
+    staffs.value.splice(index, 1);
+    return response;
+  }, true, true);
+}
+
+const handleChangeValidation = async ({ staffId, newStatus }) => {
+  await executeWithSwal(async () => {
+    const response = await staffService.updateValidation(staffId, { isValid: newStatus });
+    const staff = staffs.value.find((staff) => staff._id === staffId);
+    staff.isValid = newStatus;
+    return response;
+  }, true, true);
+}
 
 onMounted(async () => await fetchStaffs());
 </script>

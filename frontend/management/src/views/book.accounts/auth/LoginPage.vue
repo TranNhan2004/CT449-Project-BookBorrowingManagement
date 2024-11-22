@@ -30,56 +30,51 @@
   </div>
 </template>
 
-<script>
-import { Form as VForm, Field, ErrorMessage } from 'vee-validate'; // Import các component từ vee-validate
-import * as yup from 'yup'; // Import Yup để tạo schema xác thực
+<script setup>
+import { Form as VForm, Field, ErrorMessage } from 'vee-validate'; 
+import * as yup from 'yup'; 
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useStaffStore } from '@/stores/staff.store';
 
-export default {
-  name: 'LoginForm',
-  components: {
-    VForm,
-    Field,
-    ErrorMessage,
-  },
-  props: {
-    formTitle: { type: String, required: true },
-  },
-  data() {
-    return {
-      phoneOrEmail: '',
-      password: '',
-    };
-  },
-  computed: {
-    loginFormSchema() {
-      return yup.object().shape({
-        phoneOrEmail: yup
-          .string()
-          .required('Email hoặc số điện thoại không được bỏ trống'),
-        password: yup
-          .string()
-          .required('Mật khẩu không được bỏ trống')
-          .min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
-      });
-    },
-  },
-  methods: {
-    async submitLogin() {
-      const isValid = await this.$refs.form.validate();
-      if (!isValid) return;
+defineOptions({
+  name: 'login-page'
+});
 
-      const store = useStaffStore(); 
+const router = useRouter();
+const store = useStaffStore(); 
 
-      await store.login({
-        phoneOrEmail: this.phoneOrEmail,
-        password: this.password,
-      });
+const phoneOrEmail = ref('');
+const password = ref('');
 
-      this.$router.push("/"); 
-    },
+const form = ref(null);
+
+const loginFormSchema = yup.object().shape({
+  phoneOrEmail: yup
+    .string()
+    .required('Email hoặc số điện thoại không được bỏ trống'),
+  password: yup
+    .string()
+    .required('Mật khẩu không được bỏ trống')
+    .min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
+});
+
+
+const submitLogin = async () => {
+  const isValid = await form.value.validate();
+  if (!isValid) return;
+
+  try {
+    await store.login({
+      phoneOrEmail: phoneOrEmail.value,
+      password: password.value,
+    })
+    
+    router.push({ name: 'home-page' });
+  } catch (error) {
+    console.error('Login failed:', error);
   }
-};
+}
 </script>
 
 <style scoped>

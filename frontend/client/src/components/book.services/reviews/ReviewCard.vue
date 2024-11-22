@@ -4,6 +4,7 @@
     <div class="user-info text-center me-3">
       <i class="fas fa-user-circle fa-3x text-primary"></i>
       <p class="mt-2 fw-bold mb-0">{{ fullname || 'Người dùng ẩn danh' }}</p>
+      <p class="mt-2 mb-0">{{ formatDate }}</p>
     </div>
 
     <!-- Nội dung đánh giá -->
@@ -74,21 +75,19 @@ const emits = defineEmits(['update', 'delete']);
 
 const store = useReaderStore();
 
-// Props nhận vào
 const props = defineProps(['review']);
 
-// Kiểm tra xem người dùng có quyền chỉnh sửa hay không
 const canEditAndDelete = computed(() => store.reader._id.toString() === props.review.reader._id.toString());
 
-// Biến để hiển thị tên người dùng
 const fullname = computed(() => props.review.reader.surname + ' ' + props.review.reader.name);
 
-// Biến điều khiển trạng thái chỉnh sửa
+const formatDate = computed(() => new Date(props.review.createdAt).toLocaleDateString('vi-VN')); 
+
 const isEditing = ref(false);
 const editedComment = ref(props.review.comment);
-const editedRating = ref(props.review.rating);  // Biến để chỉnh sửa rating
+const editedRating = ref(props.review.rating);  
 
-// Bắt đầu chế độ chỉnh sửa
+
 const startEditing = () => {
   isEditing.value = true;
   editedComment.value = props.review.comment;  

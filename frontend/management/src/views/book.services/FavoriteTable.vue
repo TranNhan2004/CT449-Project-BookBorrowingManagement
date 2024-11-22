@@ -133,7 +133,6 @@ const fetchFavorites = async () => {
   }, false, false);
 };
 
-// Bộ lọc và tìm kiếm
 const filteredFavorites = computed(() => {
   const query = searchQuery.value.trim().toLowerCase().replace(' ', '');
   return favorites.value.filter((favorite) => {

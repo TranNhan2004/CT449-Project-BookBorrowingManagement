@@ -2,49 +2,42 @@
   <div class="form-container">
     <h1 class="form-title">ĐĂNG KÝ TÀI KHOẢN</h1>
     <VForm ref="vformRef" @submit="submitAddStaff" :validation-schema="readerFormSchema" class="vform">
-      <!-- Email -->
       <div class="form-group">
         <label for="email">Email: <span class="required">*</span></label>
         <Field name="email" type="email" class="form-control" v-model="reader.email" />
         <ErrorMessage name="email" class="error-feedback" />
       </div>
 
-      <!-- Số điện thoại -->
       <div class="form-group">
         <label for="phone">Số điện thoại: <span class="required">*</span></label>
         <Field name="phone" type="text" class="form-control" v-model="reader.phone" />
         <ErrorMessage name="phone" class="error-feedback" />
       </div>
 
-      <!-- Mật khẩu -->
       <div class="form-group">
         <label for="password">Mật khẩu: <span class="required">*</span></label>
         <Field name="password" type="password" class="form-control" v-model="reader.password" />
         <ErrorMessage name="password" class="error-feedback" />
       </div>
 
-      <!-- Họ lót -->
       <div class="form-group">
         <label for="surname">Họ lót: <span class="required">*</span></label>
         <Field name="surname" type="text" class="form-control" v-model="reader.surname" />
         <ErrorMessage name="surname" class="error-feedback" />
       </div>
 
-      <!-- Tên -->
       <div class="form-group">
         <label for="name">Tên: <span class="required">*</span></label>
         <Field name="name" type="text" class="form-control" v-model="reader.name" />
         <ErrorMessage name="name" class="error-feedback" />
       </div>
 
-      <!-- Ngày sinh -->
       <div class="form-group">
         <label for="birth">Ngày sinh: <span class="required">*</span></label>
         <Field name="birth" type="date" class="form-control" v-model="reader.birth" :max="maxBirthDate" :min="minBirthDate" />
         <ErrorMessage name="birth" class="error-feedback" />
       </div>
 
-      <!-- Giới tính -->
       <div class="form-group">
         <label for="gender">Giới tính: <span class="required">*</span></label>
         <div class="d-flex align-items-center gap-3 mt-2">
@@ -64,14 +57,12 @@
         <ErrorMessage name="gender" class="error-feedback" />
       </div>
 
-      <!-- Địa chỉ -->
       <div class="form-group">
         <label for="address">Địa chỉ: <span class="required">*</span></label>
         <Field name="address" as="textarea" class="form-control" v-model="reader.address" />
         <ErrorMessage name="address" class="error-feedback" />
       </div>
 
-      <!-- Nút -->
       <div class="form-group">
         <button type="submit" class="btn btn-primary">Đăng ký</button>
         <button type="button" class="btn btn-secondary ml-2" @click="cancel">Thoát</button>

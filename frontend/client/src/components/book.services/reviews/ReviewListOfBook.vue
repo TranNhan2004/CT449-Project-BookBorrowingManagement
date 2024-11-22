@@ -1,8 +1,8 @@
 <template>
   <div class="review-list container mt-4">
-    <!-- Bộ lọc và tìm kiếm -->
+
     <div class="row align-items-center mb-3">
-      <!-- Tìm kiếm theo tên độc giả -->
+
       <div class="col-md-6">
         <div class="input-group">
           <input
@@ -18,7 +18,6 @@
         </div>
       </div>
 
-      <!-- Bộ lọc theo số sao -->
       <div class="col-md-3 d-flex align-items-center">
         <label for="starFilter" class="fw-bold me-2 mb-0">Số sao:</label>
         <select id="starFilter" v-model="starFilter" class="form-select" @change="applyFilters">
@@ -72,7 +71,6 @@
 
     <hr />
 
-    <!-- Hiển thị danh sách các đánh giá -->
     <div v-if="filteredReviews.length > 0">
       <ReviewCard
         v-for="(review, index) in filteredReviews"
@@ -105,7 +103,7 @@ const props = defineProps({
 
 const store = useReaderStore();
 
-const reviews = ref([]); // Dữ liệu gốc
+const reviews = ref([]); 
 const searchQuery = ref('');
 const starFilter = ref('');
 const newReview = ref({
@@ -114,7 +112,7 @@ const newReview = ref({
 });
 const isSubmitting = ref(false);
 
-// Lọc reviews theo tên và sao
+
 const filteredReviews = computed(() => {
   return reviews.value.filter((review) => {
     const fullName = `${review.reader.surname} ${review.reader.name}`.toLowerCase();
@@ -145,7 +143,7 @@ const fetchReviews = async () => {
   }, false, false);
 };
 
-// Xóa một review
+
 const deleteReview = async (reviewId) => {
   await executeWithSwal(async () => {
     await reviewService.delete(reviewId);
@@ -154,7 +152,6 @@ const deleteReview = async (reviewId) => {
 };
 
 
-// Gửi bình luận mới
 const submitReview = async () => {
   if (!newReview.value.comment || !newReview.value.rating) return;
 
@@ -182,13 +179,11 @@ const updateReview = async ({ reviewId, comment, rating }) => {
       updatedReview.comment = comment;
       updatedReview.rating = rating;
     }
-  }, true, false);
+  }, false, true);
 };
 
-// Fetch dữ liệu ban đầu
-onMounted(async () => {
-  await fetchReviews();
-});
+
+onMounted(async () => await fetchReviews());
 </script>
 
 

@@ -1,14 +1,12 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <!-- Logo và tên ứng dụng -->
       <router-link to="/" class="navbar-brand d-flex align-items-center">
         <img src="@/assets/images/logo.png" alt="Logo" class="d-inline-block align-text-top" height="40">
         <span class="ms-2">QUẢN LÝ MƯỢN SÁCH</span>
       </router-link>
 
 
-      <!-- Menu điều hướng -->
       <button 
         class="navbar-toggler" 
         type="button" 
@@ -22,7 +20,6 @@
 
       <div class="collapse navbar-collapse" id="navbarNav" v-if="isAuth">
         <ul class="navbar-nav ms-auto">
-          <!-- Trang Quản Lý Dữ Liệu -->
           <li class="nav-item dropdown">
             <a 
               class="nav-link dropdown-toggle" 
@@ -50,7 +47,6 @@
             </ul>
           </li>
 
-          <!-- Trang Quản Lý Dịch Vụ -->
           <li class="nav-item dropdown">
             <a 
               class="nav-link dropdown-toggle" 
@@ -85,7 +81,6 @@
             </ul>
           </li>
 
-          <!-- Dropdown Quản Lý Người Dùng -->
           <li class="nav-item dropdown">
             <a 
               class="nav-link dropdown-toggle" 
@@ -110,7 +105,6 @@
         </ul>
       </div>
 
-      <!-- Thông tin người dùng -->
       <div class="d-flex align-items-center" v-if="isAuth">
         <span class="text-dark me-2">{{ staff.fullname }}</span> 
         <router-link to="/profile">
@@ -122,7 +116,7 @@
       </div>
     </div>
   </nav>
-  <!-- Hình ảnh ngang -->
+
   <div class="banner-container">
     <img src="@/assets/images/banner.png" alt="Banner" class="banner-image">
   </div>

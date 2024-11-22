@@ -1,10 +1,7 @@
 <template>
   <div class="container mt-4">
-    <!-- Tìm kiếm, bộ lọc, thêm mới -->
     <div class="row align-items-center gx-3 mb-3">
-      <!-- Tìm kiếm và bộ lọc trạng thái -->
       <div class="col-md-8 d-flex align-items-center gap-3">
-        <!-- Nhóm tìm kiếm -->
         <div class="input-group flex-grow-1" style="max-width: 50%;">
           <select id="searchFilter" v-model="searchFilter" class="form-select search-filter">
             <option value="">Tất cả</option>
@@ -22,7 +19,6 @@
           </button>
         </div>
 
-        <!-- Bộ lọc trạng thái -->
         <div class="filter-status">
           <label for="statusFilter" class="fw-bold mb-0 me-2">Trạng thái:</label>
           <select id="statusFilter" v-model="statusFilter" class="form-select filter-select">
@@ -35,7 +31,6 @@
       </div>
     </div>
 
-    <!-- Bảng thông tin mượn sách -->
     <table class="table table-bordered table-hover">
       <thead class="table-light">
         <tr>

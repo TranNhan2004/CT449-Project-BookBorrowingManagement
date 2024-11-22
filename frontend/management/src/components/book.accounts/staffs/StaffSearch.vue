@@ -2,7 +2,7 @@
   <div class="input-search mb-4">
     <form @submit.prevent="handleSearch">
       <div class="row g-3 align-items-center">
-        <!-- Dropdown vị trí -->
+
         <div class="col-md-4">
           <label for="positionFilter" class="form-label">Vị trí</label>
           <select
@@ -16,7 +16,7 @@
           </select>
         </div>
 
-        <!-- Dropdown trạng thái -->
+
         <div class="col-md-4">
           <label for="statusFilter" class="form-label">Trạng thái</label>
           <select
@@ -30,7 +30,7 @@
           </select>
         </div>
 
-        <!-- Thanh tìm kiếm -->
+
         <div class="col-md-4">
           <label for="searchInput" class="form-label">Tìm kiếm theo tên</label>
           <div class="input-group">

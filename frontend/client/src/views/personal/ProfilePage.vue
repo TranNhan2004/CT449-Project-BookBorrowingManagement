@@ -143,12 +143,12 @@ const formattedRankTitle = (rankTitle) => {
 
 const formattedRankClass = (rankTitle) => {
   switch (rankTitle) {
-    case 'basic': return 'text-secondary'; // Màu xám
-    case 'bronze': return 'text-warning'; // Màu đồng
-    case 'silver': return 'text-muted'; // Màu bạc
-    case 'gold': return 'text-warning'; // Màu vàng
-    case 'platinum': return 'text-info'; // Màu bạch kim
-    case 'diamond': return 'text-primary'; // Màu xanh dương
+    case 'basic': return 'text-secondary'; 
+    case 'bronze': return 'text-warning';
+    case 'silver': return 'text-muted'; 
+    case 'gold': return 'text-warning'; 
+    case 'platinum': return 'text-info'; 
+    case 'diamond': return 'text-primary'; 
     default: return 'text-dark';
   }
 };

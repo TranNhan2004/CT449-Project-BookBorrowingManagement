@@ -246,7 +246,5 @@ const cancel = async () => {
   }
 };
 
-onMounted(async () => {
-  await loadReaderDetails();
-});
+onMounted(async () => await loadReaderDetails());
 </script>

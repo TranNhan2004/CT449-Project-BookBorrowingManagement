@@ -1,11 +1,9 @@
 <template>
   <div class="reader-card d-flex border rounded p-3 mb-3 shadow align-items-center position-relative">
-    <!-- Icon user -->
     <div class="me-3">
       <i class="fas fa-user-circle fa-3x text-muted"></i>
     </div>
 
-    <!-- Thông tin độc giả -->
     <div class="flex-grow-1">
       <p class="text-muted mb-1"><strong>ID: </strong>{{ reader._id }}</p>
       <p class="text-muted mb-1"><strong>Họ và tên: </strong><i>{{ fullname }}</i></p>
@@ -25,7 +23,6 @@
       </p>
     </div>
 
-    <!-- Nút hiệu chỉnh và xóa -->
     <div class="position-absolute bottom-0 end-0 p-3 d-flex gap-2">
       <button class="btn btn-warning text-dark" @click="editReader">
         <i class="fas fa-edit"></i> <b>Hiệu chỉnh</b>
@@ -46,8 +43,6 @@
 <script setup>
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import readerService from '@/services/book.accounts/reader.service';
-import { executeWithSwal } from '@/utils/swal.util';
 
 defineOptions({
   name: 'reader-card',
@@ -56,10 +51,10 @@ defineOptions({
 const router = useRouter();
 
 const props = defineProps(['reader']);
+const emits = defineEmits(['delete', 'changeValidation'])
 
 const fullname = computed(() => `${props.reader?.surname || ''} ${props.reader?.name || ''}`.trim());
 
-// Xử lý cấp bậc
 const rankTitle = computed(() => {
   switch (props.reader?.rank?.title) {
     case 'basic': return 'Cơ bản';
@@ -74,12 +69,12 @@ const rankTitle = computed(() => {
 
 const rankClass = computed(() => {
   switch (props.reader?.rank?.title) {
-    case 'basic': return 'text-secondary'; // Màu xám
-    case 'bronze': return 'text-warning'; // Màu đồng
-    case 'silver': return 'text-muted'; // Màu bạc
-    case 'gold': return 'text-warning'; // Màu vàng
-    case 'platinum': return 'text-info'; // Màu bạch kim
-    case 'diamond': return 'text-primary'; // Màu xanh dương
+    case 'basic': return 'text-secondary'; 
+    case 'bronze': return 'text-warning'; 
+    case 'silver': return 'text-muted'; 
+    case 'gold': return 'text-warning'; 
+    case 'platinum': return 'text-info'; 
+    case 'diamond': return 'text-primary'; 
     default: return 'text-dark';
   }
 });
@@ -96,7 +91,7 @@ const rankIcon = computed(() => {
   }
 });
 
-// Trạng thái độc giả
+
 const statusClass = computed(() => props.reader?.isValid ? 'text-success' : 'text-danger');
 const statusIcon = computed(() => props.reader?.isValid ? 'fas fa-check-circle' : 'fas fa-times-circle');
 const statusText = computed(() => props.reader?.isValid ? 'Còn hiệu lực' : 'Bị vô hiệu');
@@ -111,28 +106,14 @@ const toggleButtonIcon = computed(() =>
   props.reader?.isValid ? 'fas fa-times-circle' : 'fas fa-check-circle'
 );
 
-const toggleAccountStatus = async () => {
-  const newStatus = !props.reader?.isValid;
-
-  await executeWithSwal(async () => {
-    return await readerService.updateValidation(props.reader?._id, { isValid: newStatus });
-  }, true, true);
-
-  location.reload();
-};
+const toggleAccountStatus = () => emits('changeValidation', { readerId: props.reader._id, newStatus: !props.reader.isValid });
 
 const editReader = () => {
-  router.push({ name: 'reader-edit', params: { readerId: props.reader?._id } });
+  router.push({ name: 'reader-edit', params: { readerId: props.reader._id } });
 };
 
-const deleteReader = async () => {
-  await executeWithSwal(async () => {
-    return await readerService.delete(props.reader._id);
-  }, true, true);
+const deleteReader = () => emits('delete', props.reader._id);
 
-  location.reload();
-};
 </script>
 
-<style scoped>
-</style>
+

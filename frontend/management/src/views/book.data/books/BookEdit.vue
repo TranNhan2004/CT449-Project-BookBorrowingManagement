@@ -2,14 +2,14 @@
   <div class="form-container">
     <h1 class="form-title">CHỈNH SỬA SÁCH</h1>
     <VForm ref="vformRef" @submit="submitEditBook" :validation-schema="bookFormSchema" class="vform">
-      <!-- Tiêu đề -->
+      
       <div class="form-group">
         <label for="title">Tiêu đề: <span class="required">*</span></label>
         <Field name="title" type="text" class="form-control" v-model="book.title" />
         <ErrorMessage name="title" class="error-feedback" />
       </div>
 
-      <!-- Tác giả -->
+
       <div class="form-group">
         <label for="authors">Tác giả: <span class="required">*</span></label>
         <div v-for="(author, index) in book.authors" :key="index" class="list-container">
@@ -29,7 +29,7 @@
         <ErrorMessage name="authors" class="error-feedback" />
       </div>
 
-      <!-- Chủ đề -->
+
       <div class="form-group">
         <label for="topics">Chủ đề: <span class="required">*</span></label>
         <div v-for="(topic, index) in book.topics" :key="index" class="list-container">
@@ -50,7 +50,6 @@
         <ErrorMessage name="topics" class="error-feedback" />
       </div>
 
-      <!-- Nhà xuất bản -->
       <div class="form-group">
         <label for="publisher">Nhà xuất bản: <span class="required">*</span></label>
         <Field name="publisher" as="select" class="form-control form-select" v-model="book.publisher">
@@ -62,7 +61,6 @@
         <ErrorMessage name="publisher" class="error-feedback" />
       </div>
 
-      <!-- Năm xuất bản -->
       <div class="form-group">
         <label for="publishedYear">Năm xuất bản: <span class="required">*</span></label>
         <Field name="publishedYear" as="select" class="form-control form-select" v-model="book.publishedYear">
@@ -74,28 +72,24 @@
         <ErrorMessage name="publishedYear" class="error-feedback" />
       </div>
 
-      <!-- Giá tiền -->
       <div class="form-group">
         <label for="price">Giá tiền: <span class="required">*</span></label>
         <Field name="price" type="number" class="form-control" v-model="book.price" />
         <ErrorMessage name="price" class="error-feedback" />
       </div>
 
-      <!-- Mô tả -->
       <div class="form-group">
         <label for="description">Mô tả:</label>
         <Field name="description" as="textarea" class="form-control description" v-model="book.description" />
         <ErrorMessage name="description" class="error-feedback" />
       </div>
 
-      <!-- Ảnh -->
       <div class="form-group">
         <label for="image">Hình ảnh:</label>
         <input type="file" class="form-control" @change="handleImageUpload"/>
         <ErrorMessage name="image" class="error-feedback" />
       </div>
 
-      <!-- Nút -->
       <div class="form-group">
         <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
         <button type="button" class="btn btn-secondary ml-2" @click="cancel">Thoát</button>
@@ -238,7 +232,7 @@ onMounted(async () => {
   await fetchAuthors();
   await fetchTopics();
   await fetchPublishers();
-  await loadBookDetails(); // Load thông tin sách khi mounted
+  await loadBookDetails(); 
 });
 
 const transformData = (item) => `${item._id.slice(-5)} - ${item.name} - ${item.description || item.publicId || ''}`;

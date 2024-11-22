@@ -1,9 +1,7 @@
 <template>
   <div class="form-container">
     <h1 class="form-title">ĐĂNG NHẬP</h1>
-    <!-- Vee-validate Form -->
     <VForm ref="form" @submit="submitLogin" :validation-schema="loginFormSchema" class="vform">
-      <!-- Tên đăng nhập -->
       <div class="form-group">
         <label for="phoneOrEmail">Email hoặc số điện thoại: <span class="required">*</span></label>
         <Field 
@@ -15,7 +13,6 @@
         <ErrorMessage name="phoneOrEmail" class="error-feedback" />
       </div>
 
-      <!-- Mật khẩu -->
       <div class="form-group">
         <label for="password">Mật khẩu: <span class="required">*</span></label>
         <Field name="password" type="password" class="form-control" v-model="password" placeholder="Nhập mật khẩu" />
@@ -24,7 +21,6 @@
 
       <p><i>Bạn chưa có tài khoản? <router-link to="/signup">Đăng ký ngay</router-link></i></p>
 
-      <!-- Nút đăng nhập -->
       <div class="form-group btn-container">
         <button class="btn btn-primary" type="submit">Đăng Nhập</button>
       </div>

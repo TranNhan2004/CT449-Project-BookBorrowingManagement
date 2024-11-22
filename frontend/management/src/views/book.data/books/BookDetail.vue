@@ -1,10 +1,8 @@
 <template>
   <div class="book-list container mt-4">
-    <!-- Phần 1: Thông tin chi tiết của sách -->
     <section class="book-detail-section d-flex">
       <div class="container mt-4">
         <div class="row">
-          <!-- Phần hình ảnh sách -->
           <div class="col-md-4">
             <img 
               :src="book.imageBase64" 
@@ -13,7 +11,6 @@
             />
           </div>
 
-          <!-- Phần thông tin chi tiết -->
           <div class="col-md-5">
             <h4 class="fw-bold">THÔNG TIN CHI TIẾT CỦA SÁCH</h4>
             <hr />
@@ -50,7 +47,6 @@
             </div>
           </div>
 
-          <!-- Phần mô tả sách -->
           <div class="col-md-3">
             <h4 class="fw-bold">MÔ TẢ SÁCH</h4>
             <hr />
@@ -60,14 +56,12 @@
       </div>
     </section>
 
-    <!-- Phần 2: Các bản sao của sách -->
     <section v-if="book._id">
       <hr class="section-divider" />
       <h4 class="fw-bold">CÁC BẢN SAO CỦA SÁCH</h4>
       <BookItemTable :bookId="book._id" />
     </section>
 
-    <!-- Phần 3: Các bản đánh giá của sách -->
     <section v-if="book._id">
       <hr class="section-divider" />
       <h4 class="fw-bold">CÁC ĐÁNH GIÁ VỀ SÁCH</h4>
@@ -92,7 +86,6 @@ const props = defineProps(['bookId']);
 const book = ref({});
 const router = useRouter();
 
-// Lấy thông tin chi tiết sách
 const getBookDetail = async () => {
   await executeWithSwal(async () => {
     const bookId = props?.bookId;
@@ -109,7 +102,6 @@ const getBookDetail = async () => {
   }, false, false, router, null, 'not-found', false);
 };
 
-// Hiển thị đánh giá
 const renderStars = () => {
   const stars = [];
   const rating = book.value.averageRating || 0;

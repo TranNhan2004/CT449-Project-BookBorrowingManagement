@@ -70,8 +70,8 @@
           </td>
 
           <td>
-            <span><b>Ngày đặt trước: </b> {{ getDate(reservation.borrowedDate) }}</span><br>
-            <span><b>Ngày hết hạn: </b> {{ getDate(reservation.dueDate) }}</span><br> 
+            <span><b>Ngày đặt trước: </b> {{ formatDate(reservation.borrowedDate) }}</span><br>
+            <span><b>Ngày hết hạn: </b> {{ formatDate(reservation.dueDate) }}</span><br> 
           </td>
           <td>
             <span :class="getStatusClass(reservation)">
@@ -155,7 +155,6 @@ const fetchReservations = async () => {
   }, false, false);
 };
 
-// Bộ lọc và tìm kiếm
 const filteredReservations = computed(() => {
   const query = searchQuery.value.trim().toLowerCase().replace(' ', '');
   return reservations.value.filter((reservation) => {
@@ -177,12 +176,9 @@ const filteredReservations = computed(() => {
 });
 
 
-const getDate = (timestamp) => timestamp 
-                              ? new Date(timestamp).toISOString().split('T')[0] 
-                              : new Date().toISOString().split('T')[0];
+const formatDate = date => new Date(date).toLocaleDateString('vi-VN');  
 
 
-// Trạng thái
 const isOverdue = (reservation) => new Date() > new Date(reservation.dueDate);
 const getStatusLabel = (reservation) =>
     isOverdue(reservation)

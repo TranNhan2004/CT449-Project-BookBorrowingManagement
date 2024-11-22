@@ -1,23 +1,19 @@
 <template>
   <div class="container mt-4">
-    <!-- Input Search -->
     <div class="mb-4">
       <ReaderSearch @search="handleSearch" />
     </div>
 
-    <!-- Hiển thị danh sách độc giả -->
     <div v-if="readersToDisplay.length === 0" class="text-center mt-4">
       <p class="text-muted"><i>Không tìm thấy dữ liệu phù hợp.</i></p>
     </div>
     <div v-else>
       <div v-for="reader in readersToDisplay" :key="reader._id" class="mb-3">
-        <ReaderCard :reader="reader" />
+        <ReaderCard :reader="reader" v-on:delete="handleDelete" v-on:changeValidation="handleChangeValidation"/>
       </div>
 
-      <!-- Phân trang -->
       <nav>
         <ul class="pagination justify-content-center">
-          <!-- Nút Trước -->
           <li 
             class="page-item" 
             :class="{ disabled: currentPage === 1 }"
@@ -28,7 +24,6 @@
             </a>
           </li>
 
-          <!-- Các trang -->
           <li 
             v-for="page in visiblePages" 
             :key="page"
@@ -39,7 +34,6 @@
             <a class="page-link" href="#">{{ page }}</a>
           </li>
 
-          <!-- Nút Tiếp -->
           <li 
             class="page-item" 
             :class="{ disabled: currentPage === totalPages }"
@@ -53,7 +47,6 @@
       </nav>
     </div>
 
-    <!-- Nút Thêm Độc Giả -->
     <div class="text-center mt-4">
       <button class="btn btn-success" @click="goToReaderAdd">
         <i class="fas fa-plus"></i> Thêm độc giả
@@ -172,6 +165,25 @@ const handleSearch = ({ searchValue, rankFilter, statusFilter }) => {
 
   currentPage.value = 1;
 };
+
+const handleDelete = async (readerId) => {
+  await executeWithSwal(async () => {
+    const response = await readerService.delete(readerId);
+    const index = readers.value.findIndex((reader) => reader._id === readerId);
+    readers.value.splice(index, 1);
+    return response;
+  }, true, true);
+}
+
+const handleChangeValidation = async ({ readerId, newStatus }) => {
+  await executeWithSwal(async () => {
+    const response = await readerService.updateValidation(readerId, { isValid: newStatus });
+    const reader = readers.value.find((reader) => reader._id === readerId);
+    reader.isValid = newStatus;
+    console.log(response);
+    return response;
+  }, true, true);
+}
 
 onMounted(async () => await fetchReaders());
 </script>

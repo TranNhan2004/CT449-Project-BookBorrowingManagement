@@ -1,11 +1,9 @@
 <template>
   <div class="container mt-4">
-    <!-- Input Search -->
     <div class="mb-4">
       <BookSearch @search="handleSearch" />
     </div>
 
-    <!-- Hiển thị danh sách sách -->
     <div v-if="booksToDisplay.length === 0" class="text-center mt-4">
       <p class="text-muted"><i>Không tìm thấy dữ liệu phù hợp.</i></p>
     </div>
@@ -14,10 +12,8 @@
         <BookCard :book="book" />
       </div>
 
-      <!-- Phân trang -->
       <nav>
         <ul class="pagination justify-content-center">
-          <!-- Nút Trước -->
           <li 
             class="page-item" 
             :class="{ disabled: currentPage === 1 }"
@@ -28,7 +24,6 @@
             </a>
           </li>
 
-          <!-- Các trang -->
           <li 
             v-for="page in visiblePages" 
             :key="page"
@@ -39,7 +34,6 @@
             <a class="page-link" href="#">{{ page }}</a>
           </li>
 
-          <!-- Nút Tiếp -->
           <li 
             class="page-item" 
             :class="{ disabled: currentPage === totalPages }"

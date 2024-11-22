@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Thanh tìm kiếm và bộ lọc -->
     <div class="d-flex justify-content-between mb-3 align-items-center">
     
       <div class="input-group input-search">
@@ -101,7 +100,7 @@ defineOptions({
   name: 'book-item-table',
 });
 
-// Nhận bookId từ props
+
 const props = defineProps({
   bookId: {
     type: String, 

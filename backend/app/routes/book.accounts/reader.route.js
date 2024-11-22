@@ -11,9 +11,11 @@ router.route('/me/update').patch(authController.restrictToReader(), readerContro
 router.route('/me/change-password').patch(authController.restrictToReader(), readerController.changeMyPassword);
 
 router.route('/').get(readerController.findAll);
-router.route('/:readerId').get(readerController.findById)
+router.route('/:readerId').get(readerController.findById);
 
 router.route('/:readerId').patch(authController.restrictToStaff(), readerController.updateBasicInfoById);
+router.route('/:readerId').delete(authController.restrictToStaff(), readerController.deleteById);
 router.route('/validation/:readerId').patch(authController.restrictToStaff(), readerController.updateValidationById);
+
 
 module.exports = router;

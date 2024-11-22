@@ -108,10 +108,10 @@
           </td>
 
           <td>
-            <span><b>Ngày mượn: </b> {{ getDate(bookBorrowing.borrowedDate) }}</span><br>
-            <span><b>Ngày hết hạn: </b> {{ getDate(bookBorrowing.dueDate) }}</span><br> 
+            <span><b>Ngày mượn: </b> {{ formatDate(bookBorrowing.borrowedDate) }}</span><br>
+            <span><b>Ngày hết hạn: </b> {{ formatDate(bookBorrowing.dueDate) }}</span><br> 
             <span><b>Ngày trả: </b> {{ bookBorrowing.returnedDate 
-                                      ? getDate(bookBorrowing.returnedDate) : null }}</span>
+                                      ? formatDate(bookBorrowing.returnedDate) : null }}</span>
           </td>
           <td>{{ formatAddedBy(bookBorrowing.addedBy) }}</td>
           <td>
@@ -124,11 +124,10 @@
           <td>
             <div class="d-flex justify-content-center gap-2">
               <template v-if="bookBorrowing.isEditing">
-                <!-- Nút Lưu -->
                 <button class="btn btn-primary btn-sm" @click="createBookBorrowing(bookBorrowing)">
                   <i class="fas fa-save"></i>
                 </button>
-                <!-- Nút Thoát -->
+
                 <button class="btn btn-secondary btn-sm" @click="handleExitEditMode(bookBorrowing)">
                   <i class="fas fa-times"></i>
                 </button>
@@ -139,7 +138,7 @@
                   class="btn btn-success btn-sm" 
                   @click="returnBook(bookBorrowing)"
                 >
-                  <i class="fas fa-book"></i>
+                  <i class="fas fa-book"></i> Trả sách
                 </button>
                 <button 
                   v-if="bookBorrowing.returnedDate"
@@ -182,13 +181,10 @@ const readerIdInput = ref('');
 const getFullDetail = async (bookBorrowing) => {
   console.log(bookBorrowing);
   const { bookItem, borrowedBy, addedBy, ...rest } = bookBorrowing;
-  console.log(bookItem.book);
 
   const bookProjection = { book: '-_id title image' };
   const readerProjection = { reader: '_id user', user: '-_id surname name' };
   const staffProjection = { staff: '_id user', user: '-_id surname name' };
-
-  console.log(bookItem.book);
 
   const [bookResponse, readerResponse, staffResponse] = await Promise.all([
     await bookService.get(bookItem.book, { projection: JSON.stringify(bookProjection) }),
@@ -227,7 +223,6 @@ const fetchBookBorrowings = async () => {
   }, false, false);
 };
 
-// Bộ lọc và tìm kiếm
 const filteredBookBorrowings = computed(() => {
   const query = searchQuery.value.trim().toLowerCase().replace(' ', '');
   return bookBorrowings.value.filter((bookBorrowing) => {
@@ -254,11 +249,9 @@ const filteredBookBorrowings = computed(() => {
 });
 
 
-const getDate = (timestamp) => timestamp 
-                              ? new Date(timestamp).toISOString().split('T')[0] 
-                              : new Date().toISOString().split('T')[0];
+const formatDate = date => new Date(date).toLocaleDateString('vi-VN');  
 
-// Tạo mới
+
 const createBookBorrowingRow = async () => {
   if (!readerIdInput.value.trim()) {
     const confirm = await showSwal({
@@ -277,14 +270,14 @@ const createBookBorrowingRow = async () => {
     _id: null,
     bookItem: null,
     borrowedBy: { _id: readerIdInput.value },
-    borrowedDate: getDate(),
-    dueDate: getDate(Date.now() + 14 * 24 * 60 * 60 * 1000),
+    borrowedDate: formatDate(),
+    dueDate: formatDate(Date.now() + 14 * 24 * 60 * 60 * 1000),
     addedBy: { _id: store.staff._id, fullname: store.staff.fullname },
     isEditing: true,
   });
 };
 
-// Trạng thái
+
 const isOverdue = (bookBorrowing) => new Date() > new Date(bookBorrowing.dueDate) && !bookBorrowing.returnedDate;
 const getStatusLabel = (bookBorrowing) =>
   bookBorrowing.returnedDate
@@ -336,7 +329,6 @@ const handleExitEditMode = async (bookBorrowing) => {
   };
 };
 
-// Lưu dữ liệu mượn sách (placeholder, bạn có thể tự thêm)
 const createBookBorrowing = async (bookBorrowing) => {
   await executeWithSwal(async () => {
     const data = {

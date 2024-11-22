@@ -151,7 +151,7 @@ const fetchReservations = async () => {
   }, false, false);
 };
 
-// Bộ lọc và tìm kiếm
+
 const filteredReservations = computed(() => {
   const query = searchQuery.value.trim().toLowerCase().replace(' ', '');
   return reservations.value.filter((reservation) => {

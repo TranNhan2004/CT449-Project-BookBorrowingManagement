@@ -2,28 +2,24 @@
   <div class="form-container">
     <h1 class="form-title">ĐỔI MẬT KHẨU</h1>
     <VForm ref="vformRef" @submit="submitChangePassword" :validation-schema="passwordFormSchema" class="vform">
-      <!-- Mật khẩu cũ -->
       <div class="form-group">
         <label for="oldPassword">Mật khẩu cũ: <span class="required">*</span></label>
         <Field name="oldPassword" type="password" class="form-control" v-model="formData.oldPassword" />
         <ErrorMessage name="oldPassword" class="error-feedback" />
       </div>
 
-      <!-- Mật khẩu mới -->
       <div class="form-group">
         <label for="newPassword">Mật khẩu mới: <span class="required">*</span></label>
         <Field name="newPassword" type="password" class="form-control" v-model="formData.newPassword" />
         <ErrorMessage name="newPassword" class="error-feedback" />
       </div>
 
-      <!-- Nhập lại mật khẩu mới -->
       <div class="form-group">
         <label for="confirmedNewPassword">Nhập lại mật khẩu mới: <span class="required">*</span></label>
         <Field name="confirmedNewPassword" type="password" class="form-control" v-model="formData.confirmedNewPassword" />
         <ErrorMessage name="confirmedNewPassword" class="error-feedback" />
       </div>
 
-      <!-- Nút -->
       <div class="form-group ok-container">
         <button type="submit" class="btn btn-primary ok-btn"> OK </button>
       </div>
@@ -78,7 +74,6 @@ const submitChangePassword = async () => {
   const isValid = await vformRef.value.validate();
   if (!isValid) return;
 
-  // Call API to change password here
   await executeWithSwal(async () => {
     const response = await readerService.changeMyPassword({ ...formData.value });
     await store.logout(false);

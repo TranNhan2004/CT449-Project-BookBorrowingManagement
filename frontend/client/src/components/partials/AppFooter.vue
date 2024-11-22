@@ -1,7 +1,7 @@
 <template>
   <footer class="app-footer bg-light py-3 mt-4">
     <div class="container text-center">
-      <p class="mb-0">&copy; 2024 - 2025 - <span class="fw-bold">THN - Hệ Thống Quản Lý Mượn Sách</span></p>
+      <p class="mb-0">&copy; 2024 - 2025 - <span class="fw-bold">THN - MY-LIBRARY</span></p>
     </div>
   </footer>
 </template>
