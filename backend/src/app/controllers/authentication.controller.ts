@@ -7,7 +7,9 @@ import { RoleEnum } from "../enum/index";
 import { ApiError } from "../utils/error.util";
 import { userMessages } from "../messages/vi.message";
 import { StringHelpers } from "../utils/string.util";
+import { Controller } from "../utils/controller.util";
 
+@Controller
 class AuthenticationController {
     private staffOrAdminRTCookieName = '__SorA_RT__';
     private staffOrAdminATCookieName = '__SorA_AT__';

@@ -3,9 +3,11 @@ import { authenticationController } from "../controllers/authentication.controll
 
 const router = Router();
 
-router.post("/signup", authenticationController.signup.bind(authenticationController));
-router.post("/login", authenticationController.login.bind(authenticationController));
-router.post("/refresh", authenticationController.refresh.bind(authenticationController));
-router.post("/logout", authenticationController.logout.bind(authenticationController));
+router.post("/signup", authenticationController.signup);
+router.post("/request-account-verify", authenticationController.sendVerificationLink);
+router.post("/verify-account", authenticationController.verifyAccount);
+router.post("/login", authenticationController.login);
+router.post("/refresh", authenticationController.refresh);
+router.post("/logout", authenticationController.logout);
 
 export const authenticationRouter = router;
