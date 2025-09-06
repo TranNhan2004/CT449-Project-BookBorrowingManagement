@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import type { IAuthor } from "../interfaces/author";
+import { IAuthor } from "../types/author";
 import { authorMessages } from "../messages/vi.message";
 
 const T = Schema.Types;

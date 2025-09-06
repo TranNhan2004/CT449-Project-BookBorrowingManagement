@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import type { IBookBorrowing } from "../interfaces/bookBorrowing";
+import { IBookBorrowing } from "../types/bookBorrowing";
 import { bookBorrowingMessages } from "../messages/vi.message";
 
 const T = Schema.Types;

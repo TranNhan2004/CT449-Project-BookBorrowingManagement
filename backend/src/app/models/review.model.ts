@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import type { IReview } from "../interfaces/review";
+import { IReview } from "../types/review";
 import { RatingEnum } from "../enum/index";
 import { reviewMessages } from "../messages/vi.message";
 

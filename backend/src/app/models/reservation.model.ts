@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { reservationMessages } from "../messages/vi.message";
-import type { IReservation } from "../interfaces/reservation";
+import { IReservation } from "../types/reservation";
 
 const T = Schema.Types;
 

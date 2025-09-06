@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { favoriteMessages } from "../messages/vi.message";
-import type { IFavorite } from "../interfaces/favorite";
+import { IFavorite } from "../types/favorite";
 
 const T = Schema.Types;
 

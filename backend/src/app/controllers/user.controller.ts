@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { userService } from "../services/user.service";
 import { HttpStatus } from "../utils/http.util";
 import { StringHelpers } from "../utils/string.util";

@@ -1,8 +1,10 @@
 import { userMessages } from '../messages/vi.message';
 import { GenderEnum, RankEnum, RoleEnum } from '../enum/index';
 import { Schema, model } from "mongoose";
-import type { IUser } from '../interfaces/user';
+import { IUser } from '../types/user';
 import { pattern } from '../const/index';
+import { ApiError } from '../utils/error.util';
+import { HttpStatus } from '../utils/http.util';
 
 const T = Schema.Types;
 
@@ -17,7 +19,7 @@ const UserSchema = new Schema<IUser>(
         phone: {
             type: T.String,
             index: true,
-            unique: [true, userMessages.existedPhone()],
+            unique: true,
             required: [true, userMessages.requiredPhone()],
             minlength: [10, userMessages.phoneMinLength(10)],
             match: [pattern.phone, userMessages.phoneFormat()],
@@ -25,7 +27,7 @@ const UserSchema = new Schema<IUser>(
         email: {
             type: T.String,
             index: true,
-            unique: [true, userMessages.existedEmail()],
+            unique: true,
             required: [true, userMessages.requiredEmail()],
             match: [pattern.email, userMessages.emailFormat()],
         },
@@ -104,5 +106,19 @@ const UserSchema = new Schema<IUser>(
         timestamps: true
     }
 );
+
+const errorsMap: Record<string, string> = {
+    email: userMessages.existedEmail(),
+    phone: userMessages.existedPhone()
+};
+
+UserSchema.post(['save', 'insertMany', 'updateOne'] as any, function (err: any, doc: any, next: any) {
+    if (err?.code === 11000) {
+        const field = Object.keys(err.keyPattern)[0] as string;
+        const message = errorsMap[field] || `${field} already exists`;
+        return next(new ApiError(HttpStatus.CONFLICT, message));
+    }
+    next(err);
+});
 
 export const User = model<IUser>('User', UserSchema);

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { HttpStatus } from "./http.util";
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
 export class ApiError extends Error {
     statusCode: number;
@@ -18,23 +18,21 @@ function handleMongooseError(err: any): ApiError {
         case err instanceof ApiError:
             return err;
         case err instanceof mongoose.Error.ValidationError:
-            return new ApiError(HttpStatus.BAD_REQUEST, `Validation failed: ${err.errors[0]?.message}`, { field: err.errors[0]?.path });
+            return new ApiError(HttpStatus.BAD_REQUEST, err.errors[0]?.message as string, { field: err.errors[0]?.path });
         case err instanceof mongoose.Error.CastError:
-            return new ApiError(HttpStatus.BAD_REQUEST, `Invalid value for field "${err.path}"`, { field: err.path, value: err.value });
-        case err.code === 11000:
-            return new ApiError(HttpStatus.CONFLICT, "Duplicate key error", err.keyValue);
+            return new ApiError(HttpStatus.BAD_REQUEST, `Lỗi ép kiểu tại trường "${err.path}"`, { field: err.path, value: err.value });
         case err instanceof mongoose.Error.VersionError: {
             const e = err as mongoose.Error.VersionError & { model?: { modelName: string }; version: number };
-            return new ApiError(HttpStatus.CONFLICT, "Version conflict", { model: e.model?.modelName, version: e.version });
+            return new ApiError(HttpStatus.CONFLICT, "Xung đột version", { model: e.model?.modelName, version: e.version });
         }
         case err instanceof mongoose.Error.DocumentNotFoundError: {
             const e = err as mongoose.Error.DocumentNotFoundError & { model?: { modelName: string }; filter?: unknown };
-            return new ApiError(HttpStatus.NOT_FOUND, "Document not found", { model: e.model?.modelName, filter: e.filter });
+            return new ApiError(HttpStatus.NOT_FOUND, "Không tìm thấy tài liệu", { model: e.model?.modelName, filter: e.filter });
         }
         case err.message?.includes("timed out"):
-            return new ApiError(HttpStatus.SERVICE_UNAVAILABLE, "Database request timed out");
+            return new ApiError(HttpStatus.SERVICE_UNAVAILABLE, "Yêu cầu đến CSDL bị hết thời gian chờ");
         case err.message?.includes("ECONNREFUSED") || err.message?.includes("network error"):
-            return new ApiError(HttpStatus.SERVICE_UNAVAILABLE, "Database connection error");
+            return new ApiError(HttpStatus.SERVICE_UNAVAILABLE, "Lỗi kết nối CSDL");
         default:
             return new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", { original: err.message });
     }

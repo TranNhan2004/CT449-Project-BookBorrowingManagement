@@ -1,25 +1,14 @@
-import type { Response, Request } from "express";
+import { Response, Request } from "express";
+import { MyCookieOptions } from "../types/cookies";
 
 export class CookieHelpers {
     static setCookie(
         res: Response,
         name: string,
         value: string,
-        options: {
-            httpOnly: boolean;
-            maxAgeMs: number;
-            path: string;
-            secure: boolean;
-            sameSite: "lax" | "strict" | "none";
-        }
+        options: MyCookieOptions
     ) {
-        res.cookie(name, value, {
-            httpOnly: true,
-            secure: options.secure,
-            sameSite: options.sameSite,
-            path: options.path,
-            maxAge: options.maxAgeMs,
-        });
+        res.cookie(name, value, options);
     }
 
     static getCookie(req: Request, name: string): string | undefined {
@@ -29,7 +18,8 @@ export class CookieHelpers {
     static clearCookie(
         res: Response,
         name: string,
+        options?: MyCookieOptions
     ) {
-        res.clearCookie(name);
+        res.clearCookie(name, options);
     }
 }

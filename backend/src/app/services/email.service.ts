@@ -1,15 +1,15 @@
 import nodemailer from "nodemailer";
 import { appConfig } from "../config/index";
 
-class MailService {
+class EmailService {
     private transporter;
 
     constructor() {
         this.transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: appConfig.mail?.user,
-                pass: appConfig.mail?.password,
+                user: appConfig.email?.user,
+                pass: appConfig.email?.password,
             },
         });
     }
@@ -26,4 +26,4 @@ class MailService {
     }
 }
 
-export const mailService = new MailService();
+export const emailService = new EmailService();

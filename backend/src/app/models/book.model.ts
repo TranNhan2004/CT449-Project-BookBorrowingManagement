@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import { bookMessages } from "../messages/vi.message";
-import type { IBook } from "../interfaces/book";
+import { IBook } from "../types/book";
 
 const T = Schema.Types;
 

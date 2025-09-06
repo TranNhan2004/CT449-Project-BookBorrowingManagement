@@ -2,6 +2,7 @@ export interface AppConfig {
     app: { port: number };
     db: { url: string };
     production: boolean;
+    frontendUrls: { [k: string]: string }
     jwt: {
         publicSecretKey: string;
         accessTokenSecretKey: string;
@@ -9,6 +10,5 @@ export interface AppConfig {
         refreshTokenSecretKey: string;
         refreshTokenTtl: number;
     },
-    mail?: { user: string; password: string }
-    frontendUrls?: { [k: string]: string }
+    email?: { user: string; password: string }
 }

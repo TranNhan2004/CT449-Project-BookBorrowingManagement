@@ -1,5 +1,5 @@
 import { RankEnum } from "../enum/index"
-import type { IRankInfo } from "../interfaces/user"
+import { IRankInfo } from "../types/user"
 
 export const rankInfo: Record<RankEnum, IRankInfo> = {
     [RankEnum.Basic]: {

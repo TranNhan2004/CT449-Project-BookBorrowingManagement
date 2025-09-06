@@ -107,7 +107,7 @@ export interface IReadStaffOrAdmin extends Pick<
     | 'lastLogin'
 > { }
 
-export interface ILogin extends Pick<IUser, 'email' | 'password'> { }
+export interface ILogin extends Pick<IUser, 'email' | 'password' | 'role'> { }
 export interface ILoginResponse {
     refreshToken: string,
     accessToken: string,

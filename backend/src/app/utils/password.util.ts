@@ -1,9 +1,4 @@
 import bcrypt from 'bcrypt';
-import { ApiError } from './error.util';
-import { HttpStatus } from './http.util';
-import { userMessages } from '../messages/vi.message';
-import { pattern } from '../const';
-
 
 export class PasswordHelpers {
     /**

@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import type { IPublisher } from "../interfaces/publisher";
+import { IPublisher } from "../types/publisher";
 import { publisherMessages } from "../messages/vi.message";
 
 const T = Schema.Types;

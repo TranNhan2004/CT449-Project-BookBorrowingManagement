@@ -17,9 +17,9 @@ import type {
     IRefreshResponse,
     IRequestAccountVerify,
     IVerifyAccount
-} from "../interfaces/user";
+} from "../types/user";
 import { pattern } from "../const";
-import { mailService } from "./mail.service";
+import { emailService } from "./email.service";
 
 @CatchMongooseErrors
 class AuthenticationService {
@@ -32,36 +32,31 @@ class AuthenticationService {
             case -1:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.requiredPassword()}`,
+                    userMessages.requiredPassword(),
                     { field: 'password' }
                 );
             case -2:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.passwordMinLength(8)}`,
+                    userMessages.passwordMinLength(8),
                     { field: 'password' }
                 );
             case -3:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.passwordMaxLength(20)}`,
+                    userMessages.passwordMaxLength(20),
                     { field: 'password' }
                 );
             case -4:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.passwordFormat()}`,
+                    userMessages.passwordFormat(),
                     { field: 'password' }
                 );
         }
     }
 
-    async signup(data: ICreateUser): Promise<IReadReader | IReadStaffOrAdmin> {
-        const existed = await User.findOne({ email: data.email });
-        if (existed) {
-            throw new ApiError(HttpStatus.BAD_REQUEST, userMessages.existedEmail());
-        }
-
+    async signupForReader(data: ICreateUser): Promise<IReadReader> {
         await this.isStrongPassword(data.password);
 
         const hashedPassword = await PasswordHelpers.hash(data.password);
@@ -71,9 +66,22 @@ class AuthenticationService {
             password: hashedPassword,
         });
 
-        return user.role === RoleEnum.Reader ?
-            userMapper.toIReadReader(user.toObject()) :
-            userMapper.toIReadStaffOrAdmin(user.toObject());
+        return userMapper.toIReadReader(user.toObject());
+    }
+
+    async signupForStaff(data: ICreateUser): Promise<IReadStaffOrAdmin> {
+        await this.isStrongPassword(data.password);
+
+        const hashedPassword = await PasswordHelpers.hash(data.password);
+
+        const user = await User.create({
+            ...data,
+            password: hashedPassword,
+            isActive: true,
+        });
+
+        return userMapper.toIReadStaffOrAdmin(user.toObject());
+
     }
 
     async sendVerificationLink(data: IRequestAccountVerify) {
@@ -94,7 +102,7 @@ class AuthenticationService {
 
         const verifyLink = `${url}/verify?token=${token}`;
 
-        await mailService.sendMail(
+        await emailService.sendMail(
             data.email,
             "Xác thực tài khoản",
             `<p>Chào bạn,</p>
@@ -126,7 +134,7 @@ class AuthenticationService {
         const user = await User.findOne({ email: data.email }).orFail();
 
         const isValid = await PasswordHelpers.compare(data.password, user.password);
-        if (!isValid || !user.isActive) {
+        if (!isValid || !user.isActive || data.role !== user.role) {
             throw new ApiError(HttpStatus.UNAUTHORIZED, userMessages.incorrectEmailOrPassword());
         }
 

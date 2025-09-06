@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import type { AppConfig } from '../interfaces/config';
+import { AppConfig } from '../types/config';
 
 config();
 
@@ -10,6 +10,10 @@ export const appConfig: AppConfig = {
     db: {
         url: String(process.env.MONGODB_URL),
     },
+    frontendUrls: {
+        staffOrAdmin: String(process.env.STAFF_OR_ADMIN_FE_URL),
+        reader: String(process.env.READER_FE_URL),
+    },
     jwt: {
         publicSecretKey: String(process.env.JWT_PUBLIC_SECRET_KEY),
         refreshTokenSecretKey: String(process.env.JWT_REFRESH_TOKEN_SECRET_KEY),
@@ -17,13 +21,9 @@ export const appConfig: AppConfig = {
         accessTokenSecretKey: String(process.env.JWT_ACCESS_TOKEN_SECRET_KEY),
         accessTokenTtl: Number(process.env.JWT_ACCESS_TOKEN_TTL),
     },
-    mail: {
+    email: {
         user: String(process.env.MAIL_USER),
         password: String(process.env.MAIL_PASS),
     },
-    frontendUrls: {
-        staffOrAdmin: String(process.env.STAFF_OR_ADMIN_FE_URL),
-        reader: String(process.env.READER_FE_URL),
-    },
-    production: process.env.NODE_ENV === 'production'
+    production: process.env.NODE_ENV === 'production',
 };

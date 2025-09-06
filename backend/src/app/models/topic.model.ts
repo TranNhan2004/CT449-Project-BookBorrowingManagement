@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import type { ITopic } from "../interfaces/topic";
+import { ITopic } from "../types/topic";
 import { topicMessages } from "../messages/vi.message";
 
 const T = Schema.Types;

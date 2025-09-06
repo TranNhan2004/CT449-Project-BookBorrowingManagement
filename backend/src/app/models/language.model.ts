@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import type { ILanguage } from "../interfaces/language";
+import { ILanguage } from "../types/language";
 import { languageMessages } from "../messages/vi.message";
 
 const T = Schema.Types;

@@ -1,6 +1,5 @@
-import type { ObjectId } from "mongoose"
-import type { IReadReader, IReadStaffOrAdmin, IUser } from "../interfaces/user"
-import { User } from "../models/user.model"
+import { ObjectId } from "mongoose";
+import { IReadReader, IReadStaffOrAdmin, IUser } from "../types/user";
 
 class UserMapper {
     constructor() { }

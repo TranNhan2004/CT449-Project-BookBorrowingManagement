@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
 import { userRouter } from './routes/user.route';
 import { authenticationRouter } from './routes/authentication.route';
 import { globalErrorHandler } from './utils/error.util';
-import morgan from 'morgan';
+import { appConfig } from './config';
+
 
 function createApp() {
     const app = express();
@@ -13,8 +15,12 @@ function createApp() {
     app.use(express.json());
     app.use(morgan('dev'));
     app.use(cors({
-        credentials: true
+        origin: Object.values(appConfig.frontendUrls),
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
     }));
+
 
     app.use('/api/auth', authenticationRouter);
     app.use('/api/users', userRouter);

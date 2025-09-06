@@ -1,5 +1,5 @@
 import { RoleEnum } from "../enum/index";
-import type { ICreateUser, IReadReader, IReadStaffOrAdmin, IRequestPasswordReset, IResetPassword, IUpdatePassword, IUpdateUserInfo, IUser } from "../interfaces/user";
+import type { ICreateUser, IReadReader, IReadStaffOrAdmin, IRequestPasswordReset, IResetPassword, IUpdatePassword, IUpdateUserInfo, IUser } from "../types/user";
 import { User } from "../models/user.model";
 import { ApiError, CatchMongooseErrors } from "../utils/error.util";
 import { userMapper } from "../mapper/user.mapper";
@@ -7,7 +7,7 @@ import { PasswordHelpers } from "../utils/password.util";
 import { userMessages } from "../messages/vi.message";
 import { HttpStatus } from "../utils/http.util";
 import { pattern } from "../const/index";
-import { mailService } from "./mail.service";
+import { emailService } from "./email.service";
 import { appConfig } from "../config/index";
 import jwt from 'jsonwebtoken';
 
@@ -22,25 +22,25 @@ class UserService {
             case -1:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.requiredNewPassword()}`,
+                    userMessages.requiredNewPassword(),
                     { field: 'newPassword' }
                 );
             case -2:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.passwordMinLength(8)}`,
+                    userMessages.passwordMinLength(8),
                     { field: 'newPassword' }
                 );
             case -3:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.passwordMaxLength(20)}`,
+                    userMessages.passwordMaxLength(20),
                     { field: 'newPassword' }
                 );
             case -4:
                 throw new ApiError(
                     HttpStatus.BAD_REQUEST,
-                    `Validation failed: ${userMessages.newPasswordFormat()}`,
+                    userMessages.newPasswordFormat(),
                     { field: 'newPassword' }
                 );
         }
@@ -75,7 +75,7 @@ class UserService {
         if (!(await PasswordHelpers.compare(data.oldPassword, user.password))) {
             throw new ApiError(
                 HttpStatus.BAD_REQUEST,
-                `Validation failed: ${userMessages.incorrectOldPassword()}`,
+                userMessages.incorrectOldPassword(),
                 { field: 'oldPassword' }
             );
         }
@@ -85,7 +85,7 @@ class UserService {
         if (data.newPassword !== data.confirmNewPassword) {
             throw new ApiError(
                 HttpStatus.BAD_REQUEST,
-                `Validation failed: ${userMessages.confirmNewPasswordMismatch()}`,
+                userMessages.confirmNewPasswordMismatch(),
                 { field: 'confirmNewPassword' }
             )
         }
@@ -106,14 +106,14 @@ class UserService {
             ? appConfig.frontendUrls?.reader
             : appConfig.frontendUrls?.staffOrAdmin;
 
-        const resetLink = `${url}/reset?token=${token}`;
+        const resetLink = `${url} / reset ? token = ${token}`;
 
-        await mailService.sendMail(
+        await emailService.sendMail(
             user.email,
             "Đặt lại mật khẩu",
-            `<p>Bấm vào link để đặt lại mật khẩu:</p>
-            <a href="${resetLink}">${resetLink}</a>
-            <p>Link sẽ hết hạn sau ${Math.round(seconds / 60)} phút</p>`
+            `< p > Bấm vào link để đặt lại mật khẩu: </p>
+            < a href = "${resetLink}" > ${resetLink} </a>
+            < p > Link sẽ hết hạn sau ${Math.round(seconds / 60)} phút </p>`
 
         );
     }
@@ -132,7 +132,7 @@ class UserService {
         if (data.newPassword !== data.confirmNewPassword) {
             throw new ApiError(
                 HttpStatus.BAD_REQUEST,
-                `Validation failed: ${userMessages.confirmNewPasswordMismatch()}`,
+                userMessages.confirmNewPasswordMismatch(),
                 { field: 'confirmNewPassword' }
             )
         }
